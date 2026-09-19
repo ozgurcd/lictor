@@ -1,0 +1,45 @@
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  STATICCHECK_VERSION: v0.8.1
+  RULEFLOOR_VERSION: v0.9.1
+  RULEFLOOR_SHA256: 989a7af3b4c83486e1bc600f9efb2030bcbf4371b0261df3f47c5d92b584acf3
+  ACHTA_VERSION: v0.5.10
+  ACHTA_SHA256: 0706c54865d959a15f04745618b11bdfc7ea7aa3b1fe249f309f642ca9dbb233
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - name: Install pinned validation tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .cache/tools .cache/downloads
+          GOBIN="$PWD/.cache/tools" go install "honnef.co/go/tools/cmd/staticcheck@${STATICCHECK_VERSION}"
+          curl --fail --silent --show-error --location \
+            "https://github.com/ozgurcd/rulefloor/releases/download/${RULEFLOOR_VERSION}/rulefloor_${RULEFLOOR_VERSION#v}_linux_amd64.tar.gz" \
+            -o .cache/downloads/rulefloor.tar.gz
+          echo "${RULEFLOOR_SHA256}  .cache/downloads/rulefloor.tar.gz" | sha256sum --check -
+          tar -xzf .cache/downloads/rulefloor.tar.gz -C .cache/tools rulefloor
+          curl --fail --silent --show-error --location \
+            "https://github.com/ozgurcd/achta/releases/download/${ACHTA_VERSION}/achta_Linux_x86_64.tar.gz" \
+            -o .cache/downloads/achta.tar.gz
+          echo "${ACHTA_SHA256}  .cache/downloads/achta.tar.gz" | sha256sum --check -
+          tar -xzf .cache/downloads/achta.tar.gz -C .cache/tools achta
+          echo "$PWD/.cache/tools" >> "$GITHUB_PATH"
+      - name: Canonical validation
+        run: make verify

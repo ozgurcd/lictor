@@ -1,0 +1,43 @@
+{
+  "repository": "identuum-idp-oss",
+  "head": "1cbe9f6c1df8dee83f8ba93e66217cf170b454a7",
+  "files": {
+    "coverage.go": {
+      "sha256": "0ea4442e71094465a5d9efcd3fdc57a3e3a3711385ea928c61969ef9f318b43c",
+      "lines": 396
+    },
+    "coverage_test.go": {
+      "sha256": "f02eb754506f37d6783c6b6bdb6370ffaf3e084989f2ab4e064a532e81291909",
+      "lines": 259
+    },
+    "decide.go": {
+      "sha256": "c86267cf97068f39c396c3592949a78cc13238b12f96942aedb3e8d2b205ce82",
+      "lines": 186
+    },
+    "decide_test.go": {
+      "sha256": "fb9db00ec47d9dc9a11bed2c23d09d25077b3b0a268a7043a267ae78f43c20a6",
+      "lines": 144
+    },
+    "main.go": {
+      "sha256": "6b0234b02d7752ab73a29422dc0c83abd893f45a4d638eef153c8ed884816c76",
+      "lines": 319
+    },
+    "subject.go": {
+      "sha256": "519812ad759136cef6efde756addf63f743d322e0654c38ce71b04d16a4f563a",
+      "lines": 128
+    },
+    "subject_test.go": {
+      "sha256": "d0910e15779d03f45b826cb38408383918d331d04c6f053ebd15616a7bca4b29",
+      "lines": 227
+    }
+  },
+  "assertions": {
+    "cmd/lictor/main_test.go": 23,
+    "internal/executor/executor_test.go": 9,
+    "internal/grype/asof_test.go": 1,
+    "internal/grype/coverage_test.go": 35,
+    "internal/grype/decide_test.go": 18,
+    "internal/grype/port_test.go": 0,
+    "internal/grype/subject_test.go": 24
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "lictor.error.v1"
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "reason"
+      ],
+      "properties": {
+        "outcome": {
+          "enum": [
+            "pass",
+            "fail",
+            "cannot_evaluate"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "exit_code": {
+      "const": 2
+    }
+  },
+  "required": [
+    "schema_version",
+    "evaluation",
+    "exit_code"
+  ]
+}

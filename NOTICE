@@ -1,0 +1,7 @@
+internal/grype derives from identuum-idp-oss/tools/grype-gate at
+1cbe9f6c1df8dee83f8ba93e66217cf170b454a7, ported under the owner's LICTOR-0
+authorization. The source LICENSE states:
+Copyright © 2026 Ozgur Demir. All rights reserved.
+SPDX-License-Identifier: LicenseRef-AllRightsReserved
+
+This port does not introduce an open-source license or authorize a release.

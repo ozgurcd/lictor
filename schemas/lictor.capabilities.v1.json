@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "lictor.capabilities.v1"
+    },
+    "version": {
+      "const": "v0.1.0"
+    },
+    "commands": {
+      "const": [
+        "version",
+        "capabilities",
+        "grype"
+      ]
+    },
+    "machine_interfaces": {
+      "const": [
+        "lictor.version.v1",
+        "lictor.capabilities.v1",
+        "lictor.grype.v1"
+      ]
+    },
+    "exit_codes": {
+      "const": {
+        "pass": 0,
+        "fail": 1,
+        "cannot_evaluate": 2
+      }
+    },
+    "repository_selection": {
+      "type": "string",
+      "minLength": 1
+    },
+    "replay": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "version",
+    "commands",
+    "machine_interfaces",
+    "exit_codes",
+    "repository_selection",
+    "replay"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "lictor.grype.v1"
+    },
+    "repository": {
+      "type": "string"
+    },
+    "as_of": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "reason"
+      ],
+      "properties": {
+        "outcome": {
+          "enum": [
+            "pass",
+            "fail",
+            "cannot_evaluate"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "exit_code": {
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "as_of",
+    "evaluation",
+    "exit_code"
+  ]
+}
