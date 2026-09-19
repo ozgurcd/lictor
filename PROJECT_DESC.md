@@ -1,6 +1,6 @@
 # lictor — project description
 
-**Status:** the judge's file (PM-owned, like `identuum/TECH_STACK.md`). Agents read it; they do not edit it. Written 2026-09-19; amended 2026-09-19 three times (§3 determinism: the clock is an input; an external tool's clock is its own; §3a technology stack added, and six sentences made exact after LICTOR-0's two stops). Everything a slice brief does not restate is here; a brief that says "PROJECT_DESC.md applies" means this whole file.
+**Status:** the judge's file (PM-owned, like `identuum/TECH_STACK.md`). Agents read it; they do not edit it. Written 2026-09-19; amended 2026-09-19 four times (§3 determinism: the clock is an input; an external tool's clock is its own; §3a technology stack added, six sentences made exact after LICTOR-0's two stops; §4 row 1 marked PORTED at bc51fed and its line count re-measured). Everything a slice brief does not restate is here; a brief that says "PROJECT_DESC.md applies" means this whole file.
 
 ## 1. What lictor is, in one paragraph
 
@@ -65,11 +65,11 @@ Command packages import no other command package; adapters import no command pac
 
 ## 4. Migration table
 
-Source of truth for the inventory: `wiki/contracts/retirement-ledger.md` (rows 5–31); "Lines" are the ledger's counts at its last census and drift with every edit (grype-gate is 1659 since OSS 1cbe9f6, the ledger row still says 1638 until the wiki re-measures it) — the ledger, not this table, is authoritative, and a port measures its source at the SHA it names. "Why not achta" is the ledger's own replacement column. Order is by pain, not size: first what is shared by path or copy today.
+Source of truth for the inventory: `wiki/contracts/retirement-ledger.md` (rows 5–31); "Lines" are the ledger's counts at its last census and drift with every edit (grype-gate: 1659 since OSS 1cbe9f6, re-measured in the ledger by wiki e7e0a87 on 2026-09-19; lictor's port of it, at that SHA, is 1,659 lines) — the ledger, not this table, is authoritative, and a port measures its source at the SHA it names. "Why not achta" is the ledger's own replacement column. Order is by pain, not size: first what is shared by path or copy today.
 
 | Order | Program | Source | Lines | Rules bound | Why not achta | lictor command (proposed) |
 |---|---|---|---|---|---|---|
-| 1 | grype-gate | identuum-idp-oss `tools/grype-gate` | 1638 | GRYPE-FIXABLE-FAILS-1, GRYPE-SUBJECT-1 | vulnerability policy, outside achta's boundary by its spec; three consumers today | `lictor grype --repo` |
+| 1 | grype-gate | identuum-idp-oss `tools/grype-gate` | 1659 | GRYPE-FIXABLE-FAILS-1, GRYPE-SUBJECT-1 | vulnerability policy, outside achta's boundary by its spec; three consumers today | `lictor grype --repo` — PORTED, lictor bc51fed (LICTOR-0, 2026-09-19), unreleased; consumers not yet switched |
 | 2 | repo-green-gate | wiki `tools/repo-green-gate.sh` | 366 | none | executor (build/vet/gofmt/test now); achta declares no shell execution | `lictor green --repo` |
 | 3 | clockfuse-gate | wiki `tools/clockfuse-gate.sh` (+ OSS `tools/clockfuse`, 2048, test-policy analyzer) | 169 | none | test-policy analyzer | `lictor clockfuse --repo` |
 | 4 | rulefloor-install-gate | wiki `tools/rulefloor-install-gate.sh`, mirrored into OSS and ui `scripts/` | 196 | CI-LOCAL-PARITY-1 pins its digest | achta `toolchain check` covers the pin half only; the workflow scan for a second install route is policy | `lictor rulefloor-install --repo` |

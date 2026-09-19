@@ -45,3 +45,23 @@ read-only. README.md still describes the LICTOR-0 unreleased state; its broader
 installation prose is left for an authorized documentation change under this
 slice's restriction to release notes and required wiki records. The owner's
 PROJECT_DESC.md amendment was present at startup and is left held unchanged.
+
+## 2026-09-19 — LICTOR-1 amendment 1
+
+The first Release run failed because checkout fetched the tag's target commit
+directly into its runner-local tag ref. GitHub's annotated v0.1.0 object
+9ebd6ae2eaf3e157a913fe29606506931eca9504 remained intact at release commit
+a1bee4dfb50a014b6cdf6aac4141731fc9b8a6a8.
+
+Added workflow_dispatch with an explicit existing-tag input and tagged-source
+checkout. The runner restores that remote tag object before requiring annotation,
+matching tag target and HEAD, matching source version and passing tests. Archive
+and publication commands are unchanged. The owner authorized dispatching this
+workflow for v0.1.0 without moving or recreating the tag.
+
+The owner's PROJECT_DESC.md amendment is committed unchanged at SHA-256
+6875314ec4219041765f4267237764cfed84fd3f3a9cbf1d5ab92e48c369abd7. Publication,
+published checksums, the single authenticated Homebrew formula entry and install
+proof are reported after the workflow. No consumer or workspace-wiki edit is
+authorized. The consumer pin and authenticated CI install route remain the next
+switch's work; external queue filing is declined under this slice's scope.
