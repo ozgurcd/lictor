@@ -1,8 +1,22 @@
 # Lictor
 
-Identuum-specific gate execution. Initial source version: v0.1.0, unreleased.
+Identuum-specific gate execution. Current release: v0.1.0.
 The binding charter is [PROJECT_DESC.md](PROJECT_DESC.md); implemented contracts,
 boundaries and the migration plan are in [PROJECT_SPEC.md](PROJECT_SPEC.md).
+
+## Install
+
+```sh
+brew install ozgurcd/tap/lictor
+lictor version --json
+```
+
+The repository and release downloads are public; no GitHub token is required.
+The [releases page](https://github.com/ozgurcd/lictor/releases) publishes archives
+for Darwin/Linux on arm64/amd64 and a `checksums.txt` file for each release.
+For CI, pin `LICTOR_VERSION` and the matching platform archive's published
+`LICTOR_SHA256`, download from the public release URL, verify that checksum and
+assert `lictor version --json` before running a gate.
 
 ## Build and use
 
@@ -41,11 +55,9 @@ The published schemas are in schemas/; port measurements are in docs/lictor-0.md
 Build from a normal Git checkout: Make stores downloaded module sources under
 .git/lictor-cache/go-mod and other build artifacts under .cache/.
 
-## Release and future Homebrew installation
+## Releases
 
-No Lictor release or formula exists as part of this slice. An owner-authorized
-annotated version tag triggers .github/workflows/release.yml. Version, archives,
-checksums, release notes and later Formula/lictor.rb must agree. If the release
-requires private GitHub access, Homebrew uses HOMEBREW_GITHUB_API_TOKEN supplied by
-the operator; never commit or print its value. Consumer migrations happen only
-after release, one repository per slice. No consumers were rewired for LICTOR-0.
+An owner-authorized annotated version tag triggers .github/workflows/release.yml;
+its dispatch input can publish an existing immutable tag. Version, archives,
+checksums, release notes and Formula/lictor.rb must agree. Consumer migrations
+remain separate work, one repository per slice.

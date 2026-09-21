@@ -65,3 +65,35 @@ published checksums, the single authenticated Homebrew formula entry and install
 proof are reported after the workflow. No consumer or workspace-wiki edit is
 authorized. The consumer pin and authenticated CI install route remain the next
 switch's work; external queue filing is declined under this slice's scope.
+
+## 2026-09-21 — LICTOR-2
+
+Measured the public v0.1.0 checksums URL with curl in an empty environment and
+curl configuration disabled: HTTP 200. The unauthenticated GitHub API also
+reports private=false. README installation instructions now use the public
+Homebrew route and link the release archives and published checksums. The tap
+Formula switches from authenticated asset API URLs to the corresponding public
+release URLs; all four checksums are re-read from the public checksums.txt and
+are equal to the previous values. The existing Formula test is retained.
+
+Rulefloor and Scrinium declare MIT in their Formulae. Lictor retains
+license :cannot_represent because its NOTICE records AllRightsReserved; making
+the repository public does not change that declaration. RELEASE_NOTES.md has no
+private-distribution statement and remains unchanged. The owner charter is held
+unchanged under this slice's restricted commit scope. No code, schema, tag or
+release is changed. The no-token reinstall used a fresh cache, passed its published archive checksum,
+and passed the unchanged Formula test and style check. Installed bytes match the
+archive. CE porcelain stayed empty before/after both installed-binary proofs.
+The current command reports 2026-09-21; --as-of 2026-09-19T00:00:00Z reproduces
+LICTOR-1's evidence byte-for-byte. The date is the only live-line difference.
+Homebrew's reinstall log printed the archive filename rather than the full URL;
+its info JSON supplied the selected public download URL.
+
+OPEN AND ADJACENT: OSS needs LICTOR_VERSION=v0.1.0, a public installation route
+and LICTOR_SHA256=c051b5fa995211de4b4910395dc10b46d7b7c05be32c6af87e65345bd4eca739
+for lictor_0.1.0_linux_amd64.tar.gz, taken from published checksums.txt.
+PROJECT_SPEC.md still says to resolve private-release access before switching;
+PROJECT_DESC.md's older release-shape bullet still names private authentication,
+while its updated public-repository ruling and this brief settle the public
+route. Those files are outside this edit scope. External queue filing is declined
+because the workspace wiki and consumers are read-only.
