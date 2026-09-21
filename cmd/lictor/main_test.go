@@ -60,6 +60,7 @@ func TestVersionAndCapabilitiesSchemas(t *testing.T) {
 
 func TestHumanAndJSONAgreeForImageAndRefusals(t *testing.T) {
 	root := t.TempDir()
+	declarePin(t, root, version)
 	scan := filepath.Join(root, "scan.json")
 	if err := os.WriteFile(scan, []byte(`{"source":{"type":"image","target":{"userInput":"fixture:verify"}},"matches":[]}`), 0o600); err != nil {
 		t.Fatal(err)
@@ -95,6 +96,7 @@ func TestHumanAndJSONAgreeForImageAndRefusals(t *testing.T) {
 
 func TestDefaultClockReadOnceAndOverrideNeverReadsClock(t *testing.T) {
 	root := t.TempDir()
+	declarePin(t, root, version)
 	calls := 0
 	clock := func() time.Time { calls++; return fixedClock() }
 	var out bytes.Buffer
@@ -112,6 +114,7 @@ func TestDefaultClockReadOnceAndOverrideNeverReadsClock(t *testing.T) {
 
 func TestDefaultRepositoryIsCWD(t *testing.T) {
 	root := t.TempDir()
+	declarePin(t, root, version)
 	t.Chdir(root)
 	_, document, _ := invoke(t, "grype", "-coverage-only", "--json", "--as-of", "2026-09-16T00:00:00Z")
 	var result grypeResult
@@ -129,6 +132,7 @@ func TestDefaultRepositoryIsCWD(t *testing.T) {
 
 func TestReplayIsByteIdenticalAndMissingScannerRefuses(t *testing.T) {
 	root := t.TempDir()
+	declarePin(t, root, version)
 	scan := filepath.Join(root, "scan.json")
 	input := []byte(`{"source":{"type":"image","target":{"userInput":"fixture:verify"}},"matches":[]}`)
 	if err := os.WriteFile(scan, input, 0o600); err != nil {

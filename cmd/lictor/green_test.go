@@ -16,6 +16,7 @@ func TestGreenCommandContract(t *testing.T) {
 	t.Setenv("GOENV", "off")
 	t.Setenv("GOFLAGS", "")
 	root := t.TempDir()
+	declarePin(t, root, version)
 	for _, tc := range []struct {
 		name, source, outcome, cause string
 		code                         int
@@ -52,7 +53,7 @@ func TestGreenCommandContract(t *testing.T) {
 			if got.Outcome != tc.outcome || got.Cause != tc.cause || got.Subject != filepath.Base(root) || got.GoVersion == "" {
 				t.Fatalf("contract: %s", document)
 			}
-			if strings.Contains(human, root) || !strings.Contains(human, got.GoVersion) {
+			if strings.Contains(human, root) || !strings.HasSuffix(human, "; "+strings.Fields(got.GoVersion)[2]) {
 				t.Fatalf("identity: %s", human)
 			}
 			if strings.TrimSpace(diagnostic) != strings.TrimSpace(got.Excerpt) {

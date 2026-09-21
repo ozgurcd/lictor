@@ -1,6 +1,6 @@
 # Lictor
 
-Identuum-specific gate execution. Current release: v0.2.0.
+Identuum-specific gate execution. Current release: v0.3.0.
 The binding charter is [PROJECT_DESC.md](PROJECT_DESC.md); implemented contracts,
 boundaries and the migration plan are in [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
@@ -26,8 +26,16 @@ make build
 ./bin/lictor capabilities --json
 ./bin/lictor green --repo /absolute/path/to/repository
 ./bin/lictor grype --repo /absolute/path/to/repository
+./bin/lictor clockfuse --repo /absolute/path/to/repository
+./bin/lictor route --repo /absolute/path/to/repository
 ./bin/lictor grype --repo /absolute/path/to/repository -scan report.json -inventory inventory.cdx.json --as-of 2026-09-19T00:00:00Z --json
 ```
+
+Every repository command requires a matching LICTOR_VERSION in the consumer's
+.github/workflows/ci.yml. Absence or mismatch refuses with exit 2 and one stderr
+line, with no stdout. `--unpinned` permits deliberate non-consumer use with no
+declaration; it never bypasses a mismatch. JSON includes declared_version and
+pinned. The released v0.3.0 intentionally refuses consumers still pinned v0.2.0.
 
 The source judge's stdout evidence line is preserved. Human stderr separately
 names the selected repository and as_of; JSON carries the same evidence as
@@ -43,13 +51,26 @@ Executors have deadlines and output bounds; missing tools never pass.
 
 `green` runs gofmt, build, vet and tests in that order, stopping at the first red.
 The test invocation keeps `-count=1 -timeout=120s`. Human output names the subject
-by base name and the Go version. Exit 0 is GREEN, 1 NOT-GREEN, 2 CANNOT-EVALUATE
+by base name and the Go version token, without platform. JSON retains the full
+Go version and platform. GOFLAGS is dropped; GOWORK and GOENV are set to off. Exit 0 is GREEN, 1 NOT-GREEN, 2 CANNOT-EVALUATE
 (including a missing Go toolchain or go.mod). `--json` emits lictor.green.v1 with
 the same cause, subject, version and exit code plus the failing output excerpt.
 The excerpt is also on stderr: at most twelve lines and 16 KiB. Go test excerpts
 keep only FAIL headings and test-file lines. `lictor green --help` lists flags;
 omitting --repo selects cwd. No hook, bypass or selftest command is included.
 See PROJECT_SPEC.md for subprocess bounds and the Go environment allowlist.
+
+`clockfuse` checks the consumer-owned analyzer against .clockfuse-snapshot.
+Only new classes or rising counts fail; line changes and removals pass. The
+explicit `--snapshot` form regenerates that file; default check mode writes
+nothing. Missing analyzer/snapshot refuses. No selftest or stdin mode is shipped.
+
+`route` selects house policy only where a workflow has a non-comment install
+line, delegates each judgement to Achta, and names every skipped set. It checks
+both Lictor keys in separate Achta calls. A declared ACHTA_VERSION must match;
+otherwise the installed version is printed. `--achta-workspace ABS` explicitly
+selects Achta's workspace when discovery is ambiguous. Achta still requires its
+wiki layout; Lictor does not fabricate one on an isolated runner.
 
 ## Validation
 
@@ -71,4 +92,4 @@ Build from a normal Git checkout: Make stores downloaded module sources under
 An owner-authorized annotated version tag triggers .github/workflows/release.yml;
 its dispatch input can publish an existing immutable tag. Version, archives,
 checksums, release notes and Formula/lictor.rb must agree. Consumer migrations
-remain separate work, one repository per slice.
+remain separate work after all affected pins and checksums move together.

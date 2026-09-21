@@ -7,14 +7,16 @@
       "const": "lictor.capabilities.v1"
     },
     "version": {
-      "const": "v0.2.0"
+      "const": "v0.3.0"
     },
     "commands": {
       "const": [
         "version",
         "capabilities",
         "grype",
-        "green"
+        "green",
+        "clockfuse",
+        "route"
       ]
     },
     "machine_interfaces": {
@@ -22,7 +24,9 @@
         "lictor.version.v1",
         "lictor.capabilities.v1",
         "lictor.grype.v1",
-        "lictor.green.v1"
+        "lictor.green.v1",
+        "lictor.clockfuse.v1",
+        "lictor.route.v1"
       ]
     },
     "exit_codes": {

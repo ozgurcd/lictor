@@ -29,10 +29,15 @@ build: directories
 
 # Explicit live scan; the default verify chain runs offline fixtures instead.
 grype-scan: build
-	./bin/lictor grype --repo "$(REPO)"
+	./bin/lictor grype --repo "$(REPO)" --unpinned
 
 test: directories
 	go test ./... -count=1 -timeout=120s $(TEST_ARGS)
+
+# Explicit source-versus-port proof; SOURCE_SCRIPT is read-only and owner-selected.
+.PHONY: clockfuse-conformance
+clockfuse-conformance: directories
+	go test ./internal/clockfuse -count=1 -timeout=120s -v -clockfuse-source-script "$(SOURCE_SCRIPT)"
 
 race: directories
 	go test -race ./... -count=1 -timeout=120s

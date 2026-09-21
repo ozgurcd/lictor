@@ -7,7 +7,7 @@
       "const": "lictor.version.v1"
     },
     "version": {
-      "const": "v0.2.0"
+      "const": "v0.3.0"
     }
   },
   "required": [

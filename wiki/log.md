@@ -207,3 +207,65 @@ judgement is added here. The retired repo-green selftest statement is corrected
 by the owner. This charter commit contains no implementation or release change.
 The implementation still owes pin, environment, line, clockfuse and route proofs,
 the full gate, v0.3.0 publication and Homebrew installation.
+
+## 2026-09-21 — LICTOR-4 Amendment 1 implementation and v0.3.0
+
+Charter commit d9db9b1 preserved SHA-256
+cd04f8478605bef875a528883018bda2d5e0ddd882fde34e4baf6099dc240768.
+Every repository command now checks the first exact LICTOR_VERSION line in
+ci.yml. Absence and mismatch refuse before execution; --unpinned permits only
+absence. The four required cases and the mismatch-with-unpinned case were red
+on old code and pass now. Existing fixture declarations were made explicit.
+Grype's policy, executor environment and CE evidence line remain byte-identical.
+
+Go execution drops GOFLAGS and sets GOWORK=off and GOENV=off. The adversarial
+fixture initially passed because inherited -tags=nonexistent hid a broken Go
+file; now it fails while a clean fixture remains green. Human green evidence
+ends in go1.27.1; JSON retains the full version and platform.
+
+Clockfuse preserves all five source fixture outcomes and normalized live data.
+OSS currently has 14 classes, not the snapshot's 15: the removed class is
+internal/service/mfa_stepup_password_rule_test.go / MFAEnrollmentService / now
+(count 2 in the snapshot). CE has 28, exactly matching its snapshot. Both raw
+analyzers exit 1; the wrapper deliberately tolerates that exit, as its source
+does. Check writes nothing; an explicit scratch snapshot proves all four header
+lines and identical finding lines. The analyzer remains consumer-owned.
+
+Route delegates to Achta v0.5.10 without YAML judgement. OSS selects Rulefloor
+and both Lictor required-key calls; UI selects Rulefloor and explicitly skips
+Lictor. Contrary to the brief, CE installs neither tool and skips both. Two real
+Achta fixtures reject go install and a literal release URL with exit 1. Nested
+fixtures exposed Achta's all-ancestor workspace discovery: it refuses ambiguity
+even though declared-route needs only YAML. Optional --achta-workspace forwards
+an explicit absolute selection to Achta; there is no Lictor workspace discovery.
+An isolated CI runner without Achta's required wiki layout still refuses: this
+is OPEN AND ADJACENT for Achta/consumer adoption, not a duplicated judgement.
+
+CLOCKFUSE-SNAPSHOT-1 hash d63cb3513614 binds new-class/count-rise rejection;
+neutralizing the comparison made both tests fail. INSTALL-ROUTE-1 hash
+e591453742f1 binds complete selected sets and native result preservation;
+forcing every set to skip failed three selection cases and native evidence.
+Both mutations were restored byte-exactly. FLOOR and RED-PROOFS are now 5; the
+three original rows/hashes and their ported tests are unchanged.
+
+Full make verify passed before release, including race, staticcheck, govulncheck,
+five rule proofs and the local wiki. Final-head validation and publication
+checksums are reported after the commit; they are not self-referential fields
+in this co-versioned record. Release authority is the owner's LICTOR-4 Amendment 1:
+main fast-forward, one annotated v0.3.0, the existing workflow, one public formula
+commit and local brew upgrade. Four platform archives remain unchanged in scope.
+
+Expected reds: initial pin/environment/line tests, initial absent commands,
+the two deliberate rule mutations and two prohibited route fixtures. Setup
+errors corrected: an old positional Result literal after adding platform;
+a schema-generation Python bracket typo; a route test that inadvertently
+created the workflow it expected absent; nested Achta discovery ambiguity.
+Gograph symbol/path queries that it could not resolve are counted honestly in
+the audit (plan/review true; grade C). Test and proof details are in docs/lictor-4.md.
+
+All siblings remain read-only. Consumer follow-up moves pins/checksums together,
+replaces the copied assertion macro with command-v plus Lictor's check, switches
+clock-fuse-gate, adopts route, supplies pinned Achta and its workspace prerequisite
+on runners, and retires copied scripts/digest pins after the last switch.
+No consumer macro, snapshot, gate record, policy or external queue is edited.
+Installed v0.3.0 refusing the consumers' v0.2.0 declarations is intentional.

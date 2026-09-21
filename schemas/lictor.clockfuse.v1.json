@@ -1,40 +1,23 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "schema_version": {
-      "const": "lictor.green.v1"
+      "const": "lictor.clockfuse.v1"
+    },
+    "subject": {
+      "type": "string"
     },
     "outcome": {
       "enum": [
-        "GREEN",
-        "NOT-GREEN",
-        "CANNOT-EVALUATE"
+        "pass",
+        "fail",
+        "cannot_evaluate"
       ]
     },
-    "cause": {
+    "reason": {
       "type": "string",
       "minLength": 1
-    },
-    "subject": {
-      "type": "string",
-      "minLength": 1
-    },
-    "go_version": {
-      "type": "string",
-      "minLength": 1
-    },
-    "excerpt": {
-      "type": "string",
-      "maxLength": 16384
-    },
-    "exit_code": {
-      "enum": [
-        0,
-        1,
-        2
-      ]
     },
     "declared_version": {
       "type": [
@@ -45,27 +28,40 @@
     "pinned": {
       "type": "boolean"
     },
-    "platform": {
-      "type": "string"
+    "exit_code": {
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "snapshot_written": {
+      "type": "boolean"
     }
   },
   "required": [
     "schema_version",
-    "outcome",
-    "cause",
     "subject",
-    "go_version",
-    "excerpt",
-    "exit_code",
+    "outcome",
+    "reason",
     "declared_version",
     "pinned",
-    "platform"
+    "exit_code",
+    "findings",
+    "snapshot_written"
   ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "oneOf": [
     {
       "properties": {
         "outcome": {
-          "const": "GREEN"
+          "const": "pass"
         },
         "exit_code": {
           "const": 0
@@ -75,7 +71,7 @@
     {
       "properties": {
         "outcome": {
-          "const": "NOT-GREEN"
+          "const": "fail"
         },
         "exit_code": {
           "const": 1
@@ -85,7 +81,7 @@
     {
       "properties": {
         "outcome": {
-          "const": "CANNOT-EVALUATE"
+          "const": "cannot_evaluate"
         },
         "exit_code": {
           "const": 2

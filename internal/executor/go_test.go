@@ -19,6 +19,17 @@ func TestGoEnvironmentIsBounded(t *testing.T) {
 	}
 }
 
+func TestGoConfigurationCannotLeak(t *testing.T) {
+	t.Setenv("GOFLAGS", "-tags=nonexistent")
+	t.Setenv("GOWORK", "/fixture/go.work")
+	t.Setenv("GOENV", "/fixture/config")
+	t.Setenv("GOTOOLCHAIN", "local")
+	env := strings.Join(goEnvironment(), "\n")
+	if strings.Contains(env, "GOFLAGS=") || !strings.Contains(env, "GOWORK=off") || !strings.Contains(env, "GOENV=off") || !strings.Contains(env, "GOTOOLCHAIN=local") || strings.Contains(env, "/fixture/") {
+		t.Fatalf("ambient Go configuration leaked: %s", env)
+	}
+}
+
 func TestGoOutputLimitAndCancellation(t *testing.T) {
 	_, err := runGo(t.Context(), t.TempDir(), os.Args[0], 10*time.Second, "-test.run=TestExecutorHelper", "--", "lictor-output")
 	if err == nil || !strings.Contains(err.Error(), "output exceeds") {

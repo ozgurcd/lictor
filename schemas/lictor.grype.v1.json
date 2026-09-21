@@ -43,6 +43,15 @@
         1,
         2
       ]
+    },
+    "declared_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pinned": {
+      "type": "boolean"
     }
   },
   "required": [
@@ -50,6 +59,8 @@
     "repository",
     "as_of",
     "evaluation",
-    "exit_code"
+    "exit_code",
+    "declared_version",
+    "pinned"
   ]
 }

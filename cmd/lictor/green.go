@@ -19,6 +19,7 @@ func runGreen(ctx context.Context, args []string, wantJSON bool, out, errOut io.
 	var diagnostic bytes.Buffer
 	fs.SetOutput(&diagnostic)
 	fs.StringVar(&root, "repo", root, "absolute repository path; default current working directory")
+	unpinned := fs.Bool("unpinned", false, "permit an absent version declaration; never bypass a mismatch")
 	fs.BoolVar(&wantJSON, "json", wantJSON, "emit lictor.green.v1 instead of the human evidence line")
 	fs.Usage = func() {
 		fmt.Fprintln(&diagnostic, "lictor green: gofmt, build, vet, test; stop at first red. Exits: 0 GREEN, 1 NOT-GREEN, 2 CANNOT-EVALUATE.")
@@ -30,6 +31,7 @@ func runGreen(ctx context.Context, args []string, wantJSON bool, out, errOut io.
 		return 0
 	}
 	r := green.Refusal(root, "")
+	var pin pinMetadata
 	switch {
 	case err != nil:
 		r.Cause = err.Error()
@@ -42,6 +44,11 @@ func runGreen(ctx context.Context, args []string, wantJSON bool, out, errOut io.
 		if statErr != nil || !st.IsDir() {
 			r.Cause = "--repo must name a readable directory"
 		} else {
+			var allowed bool
+			pin, allowed = checkPin(root, *unpinned, errOut)
+			if !allowed {
+				return 2
+			}
 			r = green.Run(ctx, filepath.Clean(root), executor.GoTools{})
 		}
 	}
@@ -51,7 +58,10 @@ func runGreen(ctx context.Context, args []string, wantJSON bool, out, errOut io.
 		}
 	}
 	if wantJSON {
-		if emit(out, r) != 0 {
+		if emit(out, struct {
+			green.Result
+			pinMetadata
+		}{r, pin}) != 0 {
 			return 2
 		}
 	} else if _, err := fmt.Fprintln(out, r.Line()); err != nil {

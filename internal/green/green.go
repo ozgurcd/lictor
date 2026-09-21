@@ -27,16 +27,21 @@ type Result struct {
 	Cause         string `json:"cause"`
 	Subject       string `json:"subject"`
 	GoVersion     string `json:"go_version"`
+	Platform      string `json:"platform"`
 	Excerpt       string `json:"excerpt"`
 	ExitCode      int    `json:"exit_code"`
 }
 
 func (r Result) Line() string {
-	return fmt.Sprintf("%s: %s — subject %s; %s", r.Outcome, r.Cause, r.Subject, r.GoVersion)
+	token := "go version unavailable"
+	if fields := strings.Fields(r.GoVersion); len(fields) >= 4 {
+		token = fields[2]
+	}
+	return fmt.Sprintf("%s: %s — subject %s; %s", r.Outcome, r.Cause, r.Subject, token)
 }
 
 func Refusal(root, cause string) Result {
-	return Result{"lictor.green.v1", "CANNOT-EVALUATE", cause, filepath.Base(filepath.Clean(root)), "go version unavailable", "", 2}
+	return Result{SchemaVersion: "lictor.green.v1", Outcome: "CANNOT-EVALUATE", Cause: cause, Subject: filepath.Base(filepath.Clean(root)), GoVersion: "go version unavailable", ExitCode: 2}
 }
 
 var testFailure = regexp.MustCompile(`^(--- FAIL|FAIL|\s+\S+_test\.go:)`)
@@ -75,6 +80,10 @@ func Run(ctx context.Context, root string, tools Tools) Result {
 	if !strings.HasPrefix(r.GoVersion, "go version ") || strings.ContainsAny(r.GoVersion, "\r\n") {
 		r.Cause, r.GoVersion = "unreadable go version", "go version unavailable"
 		return r
+	}
+	fields := strings.Fields(r.GoVersion)
+	if len(fields) >= 4 {
+		r.Platform = fields[len(fields)-1]
 	}
 	st, err := os.Stat(filepath.Join(root, "go.mod"))
 	if err != nil || !st.Mode().IsRegular() {

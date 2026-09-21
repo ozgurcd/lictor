@@ -36,7 +36,7 @@ func goEnvironment() []string {
 	var env []string
 	for _, name := range []string{
 		"PATH", "HOME", "TMPDIR", "XDG_CACHE_HOME", "GOCACHE", "GOMODCACHE",
-		"GOPATH", "GOROOT", "GOENV", "GOTOOLCHAIN", "GOWORK", "GOFLAGS",
+		"GOPATH", "GOROOT", "GOTOOLCHAIN",
 		"GOPROXY", "GOSUMDB", "GOPRIVATE", "GONOPROXY", "GONOSUMDB",
 		"GOOS", "GOARCH", "CGO_ENABLED", "CC", "CXX", "SDKROOT", "MACOSX_DEPLOYMENT_TARGET",
 	} {
@@ -44,7 +44,7 @@ func goEnvironment() []string {
 			env = append(env, name+"="+value)
 		}
 	}
-	return append(env, "GIT_OPTIONAL_LOCKS=0", "LC_ALL=C")
+	return append(env, "GIT_OPTIONAL_LOCKS=0", "LC_ALL=C", "GOWORK=off", "GOENV=off")
 }
 
 func runGo(ctx context.Context, root, name string, timeout time.Duration, args ...string) ([]byte, error) {

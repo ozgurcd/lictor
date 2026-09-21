@@ -1,0 +1,150 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "lictor.route.v1"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "pass",
+        "fail",
+        "cannot_evaluate"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "declared_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pinned": {
+      "type": "boolean"
+    },
+    "exit_code": {
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "achta_version": {
+      "type": "string"
+    },
+    "declared_achta_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tool": {
+            "enum": [
+              "rulefloor",
+              "lictor"
+            ]
+          },
+          "skipped": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "exit_code": {
+                  "enum": [
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                "document": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "key",
+                "exit_code",
+                "document"
+              ]
+            }
+          }
+        },
+        "required": [
+          "tool",
+          "skipped",
+          "reason",
+          "checks"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "subject",
+    "outcome",
+    "reason",
+    "declared_version",
+    "pinned",
+    "exit_code",
+    "achta_version",
+    "declared_achta_version",
+    "sets"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "properties": {
+        "outcome": {
+          "const": "pass"
+        },
+        "exit_code": {
+          "const": 0
+        }
+      }
+    },
+    {
+      "properties": {
+        "outcome": {
+          "const": "fail"
+        },
+        "exit_code": {
+          "const": 1
+        }
+      }
+    },
+    {
+      "properties": {
+        "outcome": {
+          "const": "cannot_evaluate"
+        },
+        "exit_code": {
+          "const": 2
+        }
+      }
+    }
+  ]
+}

@@ -25,6 +25,19 @@ belong to a later authorized slice.
 ## 3. Command contracts
 
 `version` and `capabilities` are repository-independent. Each accepts `--json`.
+The release is v0.3.0; capabilities names version, capabilities, grype, green,
+clockfuse and route. Every repository command checks the first ci.yml line
+matching `^  LICTOR_VERSION: (v[0-9][0-9.]*)`. A matching pin runs; a mismatch
+refuses with exit 2, one stderr line naming the declared version and the public
+brew install command, and no stdout (including under --json). Missing ci.yml or
+no matching declaration also refuses, naming the file and `--unpinned` escape
+for deliberate non-consumer use. `--unpinned` permits absence only, never a
+mismatch, and prints one unpinned diagnostic. Unreadable/non-regular/oversize
+ci.yml refuses even with --unpinned; declaration reads are bounded to 1 MiB.
+This is the owner's exact line convention, not a YAML judgement. Help/version/
+capabilities do not require a pin. Command JSON adds declared_version (string
+or null) and pinned (bool); pin refusals deliberately emit no JSON document.
+Own `make grype-scan` passes --unpinned, still enforcing any declaration.
 `grype` takes `--repo ABSOLUTE_PATH`; omission selects the process working directory.
 The CLI supplies the selected directory explicitly to the judge; a saved directory
 report naming another tree is refused. No sibling discovery or mutable current
@@ -81,7 +94,9 @@ the source script's 3); an evaluated floor failure is NOT-GREEN (1); all four
 steps passing is GREEN (0). Hook input, bypass and --selftest are not commands.
 Human stdout names the outcome, original cause phrase, repository base name and
 Go version (or explicitly unavailable). JSON is lictor.green.v1: outcome, cause,
-subject, go_version, excerpt and exit_code. No home path appears in the evidence
+subject, go_version, platform, excerpt and exit_code, plus pin metadata.
+Human evidence ends in the version token alone (`go1.27.1`); JSON retains
+`go version go1.27.1 darwin/arm64` and separately `platform: darwin/arm64`. No home path appears in the evidence
 line. Tool diagnostics may contain source paths; they are bounded, not redacted.
 
 Go execution uses fixed argv in internal/executor, no shell. Each floor step
@@ -93,9 +108,12 @@ is printed on stderr and included in JSON. Cancellation, output overflow or
 an unstartable tool refuses with exit 2, never a green verdict.
 
 The separate Go environment allowlist is PATH, HOME, TMPDIR, XDG_CACHE_HOME,
-GOCACHE, GOMODCACHE, GOPATH, GOROOT, GOENV, GOTOOLCHAIN, GOWORK, GOFLAGS, GOPROXY,
+GOCACHE, GOMODCACHE, GOPATH, GOROOT, GOTOOLCHAIN, GOPROXY,
 GOSUMDB, GOPRIVATE, GONOPROXY, GONOSUMDB, GOOS, GOARCH, CGO_ENABLED, CC, CXX,
-SDKROOT and MACOSX_DEPLOYMENT_TARGET, with GIT_OPTIONAL_LOCKS=0 and LC_ALL=C.
+SDKROOT and MACOSX_DEPLOYMENT_TARGET, with GIT_OPTIONAL_LOCKS=0, LC_ALL=C,
+GOWORK=off and GOENV=off. GOFLAGS is not inherited. The selected repository is
+the module; ambient workspace/config files and build tags cannot hide a red.
+GOTOOLCHAIN stays because the actual version is reported.
 Go retains its own configuration and execution effects, including build caches
 and module downloads; Lictor neither reads credentials nor confines consumer
 tests. Offline fixture tests set proxy/sumdb off and use the local toolchain.
@@ -121,9 +139,95 @@ tap, using public release URLs and the published checksums without a token,
 then verifies installed bytes. The repository and releases are public since
 2026-09-20. LICTOR-0 created no tag, release or tap change.
 
+## Clockfuse and installation routes
+
+`clockfuse --repo ABS [--snapshot] [--unpinned] [--json]` executes precisely
+`go run ./tools/clockfuse .` in the selected repository, with the Go environment
+above and a five-minute/8 MiB bound. Analyzer exit status is tolerated as in the
+source wrapper; process startup errors, cancellation and overflow refuse.
+The analyzer and the separate deadline gate remain consumer-owned. Missing
+`tools/clockfuse` or `.clockfuse-snapshot` refuses by name with exit 2 (source 3).
+Check mode writes nothing. Normalization preserves the source grep filter,
+POSIX sed substitution, sort-before-count order and awk first-field behavior,
+including unmatched filtered lines. Comparison permits removals and line-number
+changes; new classes and rising counts fail. Snapshot count input must be an
+integer; malformed counts refuse rather than supplying a made-up baseline.
+
+Explicit --snapshot writes only .clockfuse-snapshot, with four source-shaped
+header lines naming `lictor clockfuse --snapshot`, the Git short head (or
+untracked), format and regeneration instruction. Finding lines are source-exact.
+Non-regular snapshot destinations refuse. Snapshot reads are bounded to 8 MiB.
+Human check text is source-exact except the remedy command, now
+`lictor clockfuse --repo <path> --snapshot`. JSON is lictor.clockfuse.v1, carrying
+that reason, finding lines, subject, write flag, outcome, exit and pin metadata.
+There is no stdin/selftest/sync command. CLOCKFUSE-SNAPSHOT-1 binds five fixtures.
+
+`route --repo ABS [--achta-workspace ABS] [--unpinned] [--json]` scans .yml/.yaml
+workflow files for non-comment lines mentioning a tool plus `install`,
+`releases/download`, `archive/refs/tags`, `brew` or `go install`. This literal
+selection does not parse or judge YAML. A tool with no install line is explicitly
+skipped. Workflow reads are bounded to 1 MiB each. For each selected policy,
+Lictor executes `achta declared-route check --dir <repo>/.github/workflows`
+with `--route-cardinality per-file-any`, one `--route-pattern`, that same
+`--required-route-pattern`, the following `--ban-pattern` values, the named
+`--required-key`, and `--required-scope /env`.
+
+Rulefloor pattern (exactly the wiki Makefile policy):
+
+```text
+rulefloor/archive/refs/tags/[$][{]RULEFLOOR_VERSION[}]
+```
+
+Rulefloor bans, in order:
+
+```text
+brew install[^#]*rulefloor
+go install[^#]*rulefloor
+rulefloor/archive/refs/tags/v[0-9]
+-X main[.]version=[$][{]RULEFLOOR_VERSION[^}]
+-X main[.]version=[$][{][^R]
+-X main[.]version=[$][^{]
+-X main[.]version=[^$]
+```
+
+Required key: RULEFLOOR_VERSION. Lictor pattern:
+
+```text
+lictor/releases/download/[$][{]LICTOR_VERSION[}]/lictor_[$][{]LICTOR_VERSION#v[}]_
+```
+
+Lictor bans, in order:
+
+```text
+brew install[^#]*lictor
+go install[^#]*lictor
+lictor/releases/download/v[0-9]
+```
+
+Achta accepts one required key per call, so Lictor invokes this set twice, once
+for LICTOR_VERSION and once for LICTOR_SHA256. Both scope to /env. No
+required-key-only mode is invented. The runtime self-check owns missing pins.
+
+Achta version is obtained with fixed `achta version --json`, requiring its
+version agreement. A declared ACHTA_VERSION uses the same exact ci.yml line
+convention and must match; stderr states declared and installed versions, or
+installed alone when undeclared. Missing Achta refuses by name. Version/check
+bounds are 30/60 seconds, each output stream 8 MiB. No retries or shell.
+Human native stdout is passed through unchanged; each native exit 0/1/2 is
+preserved, with cannot-evaluate taking precedence in the aggregate. JSON adds
+--json to native calls, retains each document and exit, and wraps selected/skipped
+sets in lictor.route.v1. Unsupported or exit-inconsistent documents refuse.
+INSTALL-ROUTE-1 binds selection, complete key sets and native-result preservation.
+
+Achta currently requires a wiki workspace even for this YAML-only judgement.
+If discovery is ambiguous, --achta-workspace passes the explicit absolute
+workspace to Achta; Lictor neither discovers one nor manufactures one. An
+isolated runner without that layout still refuses in Achta. This is an adjacent
+Achta requirement for the consumer slice, not a reason to duplicate judgement.
+
 ## 4. Migration inventory
 
-Rows 1 and 2 are implemented. Other commands are proposed, not capabilities. The
+Rows 1 through 4 are implemented. Later commands are proposed, not capabilities. The
 workspace retirement ledger remains the inventory owner; this snapshot records
 the charter's migration order with the measured Grype source count.
 
@@ -131,8 +235,8 @@ the charter's migration order with the measured Grype source count.
 |---|---|---|---|---|---|---|
 | 1 | grype-gate | identuum-idp-oss `tools/grype-gate` | 1659 | GRYPE-FIXABLE-FAILS-1, GRYPE-SUBJECT-1 | vulnerability policy, outside achta's boundary by its spec; three consumers today | `lictor grype --repo` |
 | 2 | repo-green-gate | wiki `tools/repo-green-gate.sh` | 366 | GREEN-FLOOR-1 (created by the port) | executor (build/vet/gofmt/test now); achta declares no shell execution | `lictor green --repo` |
-| 3 | clockfuse-gate | wiki `tools/clockfuse-gate.sh` (+ OSS `tools/clockfuse`, 2048, test-policy analyzer) | 169 | none | test-policy analyzer | `lictor clockfuse --repo` |
-| 4 | rulefloor-install-gate | wiki `tools/rulefloor-install-gate.sh`, mirrored into OSS and ui `scripts/` | 196 | CI-LOCAL-PARITY-1 pins its digest | achta `toolchain check` covers the pin half only; the workflow scan for a second install route is policy | `lictor rulefloor-install --repo` |
+| 3 | clockfuse-gate | wiki `tools/clockfuse-gate.sh` (+ OSS `tools/clockfuse`, 2048, test-policy analyzer) | 169 | CLOCKFUSE-SNAPSHOT-1 | Identuum snapshot arithmetic; analyzer remains consumer-owned | `lictor clockfuse --repo [--snapshot]` |
+| 4 | rulefloor-install-gate | wiki `tools/rulefloor-install-gate.sh`, mirrored into OSS and ui `scripts/` | 196 | INSTALL-ROUTE-1 | Identuum pattern selection; Achta retains all YAML judgement | `lictor route --repo` |
 | 5 | gate-witness (run half) | wiki `tools/gate-witness.sh`, mirrored ×4 | 1039 | WITNESS-CLEAN-HEAD-1, WITNESS-ONE-RUN-PER-RECORD-1 name it; six more read its records | the RECORD half is achta's (`witness init/step/finalize/check`, ledger row 19, order 2, LAST); the RUN half executes targets | `lictor witness run --repo` calling achta for the record |
 | 6 | toolchain-parity | OSS `tools/toolchain-parity` | 514 | CI-LOCAL-PARITY-1 | probes the INSTALLED binary; achta compares declarations only | `lictor toolchain --repo` |
 | 7 | mint policy | OSS `tools/mint-reachability` | 1756 | MINT-REACHABILITY-1, MINT-RECORD-AUTHORITY-1, TOOLS-NO-REACH-1 | the CLASSIFICATION is generic and belongs in achta (`reachability classify` extended to classify every repository a gate-run record pins, from the record, in one verdict); the AUTHORITY policy (which record is the mint, absent/red/foreign-headed never satisfies, the Go build-closure proof of declared no-reach) is Identuum's | `lictor mint decide --repo --sibling`, after the achta feature |
@@ -145,7 +249,8 @@ the charter's migration order with the measured Grype source count.
 
 ## 5. Consumer adoption
 
-Switch one consumer per slice, after an explicitly authorized Lictor release.
+Switch the consumers in a separately authorized consumer slice after release.
+Until their pins advance, v0.3.0 intentionally refuses their v0.2.0 declarations.
 Declare one LICTOR_VERSION and LICTOR_SHA256 and one derived CI download route;
 assert the installed version. Use public release URLs and published checksums;
 no private-release access or token is required.

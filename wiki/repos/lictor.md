@@ -7,7 +7,8 @@ verified: 2026-09-21
 
 # Lictor
 
-Module: github.com/ozgurcd/lictor. Release v0.1.0 uses the port implemented in bc51fed, unchanged.
+Module: github.com/ozgurcd/lictor. Release v0.3.0 adds runtime pin enforcement,
+clockfuse and delegated installation routes; the Grype policy is unchanged.
 Lictor executes Identuum gates; generic tools retain their judgements. The first
 command is grype, ported from OSS 1cbe9f6c1df8dee83f8ba93e66217cf170b454a7.
 CLI, policy and fixed tool execution occupy separate packages. make verify is
@@ -25,3 +26,4 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-09-21 | co-versioned | LICTOR-3 implementation: v0.2.0 adds green, bounded Go execution, lictor.green.v1 and GREEN-FLOOR-1; eight source fixtures agree and OSS/CE pass without porcelain changes. |
 | 2026-09-21 | co-versioned | LICTOR-4 charter and stop: preserve the owner amendment unchanged; Achta cannot enforce required-key-only without a route match, so the UI route proof needs a generic-tool change before this port can finish. |
 | 2026-09-21 | co-versioned | LICTOR-4 Amendment 1 charter: preserve the owner amendment unchanged; runtime pin enforcement is fail-closed and route sets apply only where a tool is installed. |
+| 2026-09-21 | co-versioned | LICTOR-4 Amendment 1 implementation: v0.3.0 adds fail-closed pins, explicit non-consumer unpinned use, isolated Go inputs, platform-independent green evidence, clockfuse and Achta route delegation; five armed mutation-proved rules, six commands, consumer read-only proofs and authorized release. |

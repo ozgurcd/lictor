@@ -16,7 +16,7 @@ import (
 	"github.com/ozgurcd/lictor/internal/grype"
 )
 
-const version = "v0.2.0"
+const version = "v0.3.0"
 
 type evaluation struct {
 	Outcome string `json:"outcome"`
@@ -24,6 +24,7 @@ type evaluation struct {
 }
 
 type grypeResult struct {
+	pinMetadata
 	SchemaVersion string     `json:"schema_version"`
 	Repository    string     `json:"repository"`
 	AsOf          *string    `json:"as_of"`
@@ -55,7 +56,7 @@ func commandError(wantJSON bool, out, errOut io.Writer, reason string) int {
 
 func run(ctx context.Context, args []string, out, errOut io.Writer, now func() time.Time) int {
 	if len(args) == 0 || args[0] == "help" || args[0] == "--help" {
-		fmt.Fprintln(out, "lictor: Identuum gate execution\nCommands: version, capabilities, grype, green\nUse lictor grype --help or lictor green --help for command options.")
+		fmt.Fprintln(out, "lictor: Identuum gate execution\nCommands: version, capabilities, grype, green, clockfuse, route\nUse lictor COMMAND --help for command options.")
 		return 0
 	}
 	wantJSON := false
@@ -84,15 +85,18 @@ func run(ctx context.Context, args []string, out, errOut io.Writer, now func() t
 			fmt.Fprintln(out, "lictor "+version)
 			return 0
 		}
-		value := map[string]any{"schema_version": "lictor.capabilities.v1", "version": version, "commands": []string{"version", "capabilities", "grype", "green"}, "machine_interfaces": []string{"lictor.version.v1", "lictor.capabilities.v1", "lictor.grype.v1", "lictor.green.v1"}, "exit_codes": map[string]int{"pass": 0, "fail": 1, "cannot_evaluate": 2}, "repository_selection": "--repo absolute path; default current working directory", "replay": "grype -scan JSON -inventory JSON --as-of RFC3339; unchanged repository inputs required"}
+		value := map[string]any{"schema_version": "lictor.capabilities.v1", "version": version, "commands": []string{"version", "capabilities", "grype", "green", "clockfuse", "route"}, "machine_interfaces": []string{"lictor.version.v1", "lictor.capabilities.v1", "lictor.grype.v1", "lictor.green.v1", "lictor.clockfuse.v1", "lictor.route.v1"}, "exit_codes": map[string]int{"pass": 0, "fail": 1, "cannot_evaluate": 2}, "repository_selection": "--repo absolute path; default current working directory", "replay": "grype -scan JSON -inventory JSON --as-of RFC3339; unchanged repository inputs required"}
 		if wantJSON {
 			return emit(out, value)
 		}
-		fmt.Fprintln(out, "lictor "+version+": version, capabilities, grype, green; exits 0 pass, 1 fail, 2 cannot_evaluate; --repo absolute path (default cwd); grype -scan with --as-of replays Lictor's dated judgement")
+		fmt.Fprintln(out, "lictor "+version+": version, capabilities, grype, green, clockfuse, route; exits 0 pass, 1 fail, 2 cannot_evaluate; --repo absolute path (default cwd); grype -scan with --as-of replays Lictor's dated judgement")
 		return 0
 	}
 	if args[0] == "green" {
 		return runGreen(ctx, args[1:], wantJSON, out, errOut)
+	}
+	if args[0] == "clockfuse" || args[0] == "route" {
+		return runHouse(ctx, args[0], args[1:], wantJSON, out, errOut)
 	}
 	if args[0] != "grype" {
 		if wantJSON {
@@ -115,6 +119,7 @@ func runGrype(ctx context.Context, args []string, wantJSON bool, out, errOut io.
 	var diagnostic bytes.Buffer
 	fs.SetOutput(&diagnostic)
 	fs.StringVar(&opts.Repository, "repo", cwd, "absolute repository path; compatibility default is current working directory")
+	unpinned := fs.Bool("unpinned", false, "permit an absent version declaration; never bypass a mismatch")
 	fs.StringVar(&opts.Scan, "scan", "", "saved Grype JSON report; otherwise run grype dir:. in the repository")
 	fs.StringVar(&opts.Inventory, "inventory", "", "matching CycloneDX JSON inventory; required for saved directory reports")
 	fs.StringVar(&opts.Allowlist, "allowlist", "grype-allowlist.json", "allowlist path; relative paths resolve under --repo")
@@ -165,6 +170,11 @@ func runGrype(ctx context.Context, args []string, wantJSON bool, out, errOut io.
 	}
 	if !st.IsDir() {
 		return finish(2, "CANNOT-EVALUATE: --repo must name a directory")
+	}
+	var allowed bool
+	r.pinMetadata, allowed = checkPin(opts.Repository, *unpinned, errOut)
+	if !allowed {
+		return 2
 	}
 	if *asOf == "" {
 		opts.AsOf = now().UTC()
