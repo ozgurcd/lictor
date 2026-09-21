@@ -143,3 +143,55 @@ selftest remain; the last consumer's retirement is separate work. External queue
 filing is declined because all sibling repositories, including the wiki, are
 read-only in this slice. Gograph source lookup required exact current symbols;
 two nonexistent symbol queries refused and are counted in its audit.
+
+## 2026-09-21 — LICTOR-4 charter and stop
+
+Committed the owner's PROJECT_DESC.md byte-unchanged first, SHA-256
+251ea74c26501a7e4f3450b6d90a30badc837190f9e7943203205e9d1e73db8c.
+No implementation, version bump, rule change, release, push, tag or tap change
+belongs to this stopped slice. Runtime and installed version remain v0.2.0.
+
+STOP: the Row-4 ruling requires UI's declared-but-not-installed Lictor route to
+be required-key-only. Installed Achta v0.5.10 has no such mode. Its source at
+de3395b, internal/cli/declared_route.go, exposes one required-key option tied to
+a required-route-pattern. internal/declaredroute/check.go sets Required=true
+only when that route pattern has a nonzero count; key scope and document-wide
+uniqueness are checked only inside `if documentResult.RequiredKey.Required`.
+
+Measured on scratch YAML under Lictor with the exact proposed Lictor route and
+three bans, per-file-any, required key LICTOR_VERSION and scope /env:
+one declared key with no install, a key duplicated at workflow and job scope
+with no install, and no key with no install ALL exit 0. All report
+`"status":"pass"` and `"required":false,"scope":"/env","key":"LICTOR_VERSION","count":0`.
+An optional route therefore does not produce the requested required-key-only
+judgement. Fabricating a matching route or implementing YAML key judgement in
+Lictor would evade the boundary rather than supply the missing Achta capability.
+
+The exact stopping charter sentence is: "If a judgement is missing from a
+generic tool and is generic in nature, the fix is a queue line for that tool,
+not code in lictor." External queue filing is declined because the workspace
+wiki and Achta are read-only. The missing generic capability needs a separate
+Achta slice; this log preserves the finding for the owner.
+
+Source measurements: wiki is now e2e7b44, not the source reference 662585b;
+both requested scripts and the Achta pattern set are unchanged between them.
+The wiki's repo-green selftest was retired meanwhile, so the charter's Row-2
+statement that the wiki still runs it is stale. The charter is owner-controlled
+and was not corrected here. OSS e642f92, CE 56a6675 and UI 4371909 all declare
+LICTOR_VERSION v0.2.0. UI declares no LICTOR_SHA256 and installs no Lictor binary.
+The brief also needs to specify which key(s) its UI required-key-only case
+requires, since its installation set names both version and checksum.
+
+The first scratch Achta invocation lacked its required wiki workspace scaffold
+and refused; selecting Lictor's existing workspace corrected the setup before
+the semantic measurements above. Achta source was read with git show without
+building or writing a graph in that read-only repository. Gograph discovery
+and source reads in Lictor changed no Go code; plan/review are not claimed.
+
+OPEN AND ADJACENT: after Achta supplies the missing judgement, the resumed
+Lictor slice still owes all implementation and v0.3.0 release proofs. Its future
+consumer slice must move all version pins/checksums together, replace the
+LICTOR_ASSERT macro with the absent-tool check plus Lictor's own self-check,
+switch clock-fuse-gate, add route targets, install pinned Achta on OSS/UI runners,
+and retire the vendored installation-gate copies and their digest pins. These
+are recorded here rather than filed into read-only sibling queues.
