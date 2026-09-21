@@ -315,3 +315,14 @@ GATE_RECORD_DRIVER integration, and the version/checksum pins. The four
 script copies remain until check's record judgement moves to Achta.
 The argv, record-conformance, refusal and output-ceiling implementation
 proofs are not claimed; implementation stops at this binding conflict.
+
+## 2026-09-21 — LICTOR-5 Amendment 1 writer authority
+
+Commit the owner-amended PROJECT_DESC.md unchanged first, SHA-256
+`ce27930a385961529ff2eebad5bb78568488ca087c6f0a4821a012f41d674cf0`.
+The prior STOP is resolved by replacing the reader rule with
+WITNESS-ONE-WRITER-1: truncating open, bounded refusal of another live writer
+and refusal of another live stepwise session. This does not promise that
+separate step invocations cannot interleave. The reader remains outside this
+port; no check judgement is implemented or tested here. Implementation and
+release proofs follow in their own commit.
