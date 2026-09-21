@@ -25,7 +25,7 @@ belong to a later authorized slice.
 ## 3. Command contracts
 
 `version` and `capabilities` are repository-independent. Each accepts `--json`.
-The release is v0.4.0; capabilities names version, capabilities, grype, green,
+The release is v0.4.1; capabilities names version, capabilities, grype, green,
 clockfuse, route and witness. Every repository command checks the first ci.yml line
 matching `^  LICTOR_VERSION: (v[0-9][0-9.]*)`. A matching pin runs; a mismatch
 refuses with exit 2, one stderr line naming the declared version and the public
@@ -152,7 +152,8 @@ leaving native stdout evidence unchanged. An explicitly selected Achta workspace
 is also printed there. Pin refusals remain exactly one stderr line.
 Check mode writes nothing. Normalization preserves the source grep filter,
 POSIX sed substitution, sort-before-count order and awk first-field behavior,
-including unmatched filtered lines. Comparison permits removals and line-number
+including unmatched filtered lines. Field splitting uses the source awk's
+space/tab separators, preserving NBSP, CR, VT and FF inside paths. Comparison permits removals and line-number
 changes; new classes and rising counts fail. Snapshot count input must be an
 integer; malformed counts refuse rather than supplying a made-up baseline.
 
@@ -169,7 +170,9 @@ There is no stdin/selftest/sync command. CLOCKFUSE-SNAPSHOT-1 binds five fixture
 workflow files for non-comment lines mentioning a tool plus `install`,
 `releases/download`, `archive/refs/tags`, `brew` or `go install`. This literal
 selection does not parse or judge YAML. A tool with no install line is explicitly
-skipped. Workflow reads are bounded to 1 MiB each. For each selected policy,
+skipped. Workflow directory enumeration and file reads are confined beneath
+the selected repository with os.Root, preserving sorted enumeration. Outside
+symlinks refuse before delegation. Reads are bounded to 1 MiB each. For each selected policy,
 Lictor executes `achta declared-route check --dir <repo>/.github/workflows`
 with `--route-cardinality per-file-any`, one `--route-pattern`, that same
 `--required-route-pattern`, the following `--ban-pattern` values, the named
@@ -265,8 +268,18 @@ is appended separately, preserving the real process exit. Startup, cancellation,
 timeout or output I/O failure refuses and leaves incomplete evidence. Judge
 adapters retain their 8 MiB fail-closed caps. Evidence lines allow 65 MiB per
 line while streaming the record, preserving carriage returns and final lines
-without a newline. Only the original EVIDENCE_RE matches, tool lines and Go
-package counts are retained; the spool is removed at command completion.
+without a newline. Captured output is inspected before copying any line.
+If that captured prefix contains NUL, the record contains exactly
+`binary-output: NAME contains NUL; evidence omitted` and no tool or evidence
+lines for the target, including no Go package count. Invalid UTF-8 without NUL
+uses `binary-output: NAME contains invalid UTF-8; evidence omitted`. NUL takes
+precedence if both occur. Neither case refuses: elapsed, target exit,
+truncation if applicable and finalization retain their normal semantics.
+The raw diagnostic stream remains unchanged; only the text record is filtered.
+Label/citation input must be valid UTF-8 without NUL before opening the record.
+Other target names are already ASCII-constrained; Git identities are hashes.
+For valid text only the original EVIDENCE_RE matches, tool lines and Go package
+counts are retained; the spool is removed at command completion.
 
 Execution inherits the existing Go allowlist plus the three Grype cache/update
 variables. No ambient GATE_WITNESS_* changes the record: --cites, --tie and
@@ -308,7 +321,7 @@ the charter's migration order with the measured Grype source count.
 ## 5. Consumer adoption
 
 Switch the consumers in a separately authorized consumer slice after release.
-Until their pins advance, v0.4.0 intentionally refuses their v0.2.0 declarations.
+Until their pins advance, v0.4.1 intentionally refuses older version declarations.
 Declare one LICTOR_VERSION and LICTOR_SHA256 and one derived CI download route;
 assert the installed version. Use public release URLs and published checksums;
 no private-release access or token is required.

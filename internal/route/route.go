@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -60,8 +61,12 @@ func Policies(tool string) []executor.RoutePolicy {
 }
 
 func Selected(root string) (map[string]bool, error) {
-	dir := filepath.Join(root, ".github", "workflows")
-	entries, err := os.ReadDir(dir)
+	repo, err := os.OpenRoot(root)
+	if err != nil {
+		return nil, fmt.Errorf("workflow repository: %w", err)
+	}
+	defer repo.Close()
+	entries, err := fs.ReadDir(repo.FS(), ".github/workflows")
 	if err != nil {
 		return nil, fmt.Errorf("workflow directory: %w", err)
 	}
@@ -71,7 +76,7 @@ func Selected(root string) (map[string]bool, error) {
 		if entry.IsDir() || (ext != ".yml" && ext != ".yaml") {
 			continue
 		}
-		f, err := os.Open(filepath.Join(dir, entry.Name()))
+		f, err := repo.Open(filepath.Join(".github/workflows", entry.Name()))
 		if err != nil {
 			return nil, err
 		}

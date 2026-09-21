@@ -1,6 +1,6 @@
 # Lictor
 
-Identuum-specific gate execution. Current release: v0.4.0.
+Identuum-specific gate execution. Current release: v0.4.1.
 The binding charter is [PROJECT_DESC.md](PROJECT_DESC.md); implemented contracts,
 boundaries and the migration plan are in [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
@@ -35,7 +35,7 @@ Every repository command requires a matching LICTOR_VERSION in the consumer's
 .github/workflows/ci.yml. Absence or mismatch refuses with exit 2 and one stderr
 line, with no stdout. `--unpinned` permits deliberate non-consumer use with no
 declaration; it never bypasses a mismatch. JSON includes declared_version and
-pinned. The released v0.4.0 intentionally refuses consumers still pinned v0.2.0.
+pinned. The released v0.4.1 intentionally refuses consumers pinned to another version.
 
 The source judge's stdout evidence line is preserved. Human stderr separately
 names the selected repository and as_of; JSON carries the same evidence as
@@ -96,7 +96,13 @@ interleave; only the external reader can judge such a record.
 Targets stream combined output to stderr and a temporary spool, capped at
 64 MiB per target. Overflow is drained, recorded with `truncated:`, and does not
 replace the target's real exit. Ordinary non-summary output remains on stderr;
-the record retains the source's evidence selection. Tool lines remain unchanged.
+the record retains the source's evidence selection for text output. Captured
+NUL output produces `binary-output: NAME contains NUL; evidence omitted`;
+invalid UTF-8 uses `contains invalid UTF-8` instead. Both suppress all tool and
+evidence lines for that target and keep its real exit, elapsed and final verdict.
+The raw diagnostic stream is unchanged. Labels/citations must be valid UTF-8
+without NUL before opening a record. This deliberately replaces the source's
+random-path binary-match message with a reproducible text line.
 `--timeout` defaults to 30 minutes per target; other commands retain their caps.
 `--cites`, `--tie commit`, and repeated `--sibling NAME=ABS` replace the source's
 corresponding environment inputs explicitly. `--as-of RFC3339` freezes the record

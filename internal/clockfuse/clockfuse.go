@@ -52,7 +52,9 @@ func Normalize(raw string) []string {
 	sort.Strings(keys)
 	lines := make([]string, 0, len(keys))
 	for _, key := range keys {
-		fields := strings.Fields(key)
+		// The source's awk default field separator splits spaces and tabs,
+		// not Go's wider Unicode whitespace set. LF already separates lines.
+		fields := strings.FieldsFunc(key, func(r rune) bool { return r == ' ' || r == '\t' })
 		word := ""
 		if len(fields) > 0 {
 			word = fields[0]

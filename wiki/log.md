@@ -362,3 +362,38 @@ external wiki write is included. Full measurements and consumer follow-up are
 in docs/lictor-5.md. Expected reds are the initial stub tests and three deliberate
 mutations. Tool diagnostics included stale-graph review/unknown-symbol lookups,
 corrected with a rebuild/measured identity, and a refused no-op rehash.
+
+## 2026-09-21 — LICTOR-6 THE-ADVERSARY, Amendment 1
+
+The owner's charter amendment (SHA-256
+6039414b404c8ebfa7cab6d69a066aa5679de869651a788eb80abcad48ee941a) is
+committed byte-unchanged with the held work. Three fixes earn v0.4.1:
+clockfuse uses source awk field separators rather than Unicode whitespace;
+route selection confines directory/file reads beneath the selected repository;
+and witness replaces NUL or invalid UTF-8 captures with one deterministic
+binary-output line, no copied tool/evidence lines, and the real exit code.
+Invalid text metadata refuses before any record opens. No new command, schema
+version, rule row or rehash. Six bound tests and existing test files are unchanged.
+
+The binary-output source behavior is explicitly a defect: grep writes a random
+spool path and loses the evidence line. The chosen NUL marker is
+`binary-output: NAME contains NUL; evidence omitted`. The earlier clockfuse
+malformed-count refusal is another declared divergence, retained. The owner's
+no-current-consumer-NUL premise is distinguished from the six fixture records,
+which remain byte-identical and do not exhaust every real target.
+
+Red-first proofs cover path truncation, two symlink escapes and binary output.
+An initially malformed test-helper invocation was corrected before restoring
+baseline production code to obtain the valid NUL red proof. All adversarial
+cases then pass. Full make verify is run before this commit and again at the
+release head; the final report carries those results and release/install hashes.
+
+At the initial measurement CE's CLI refused its v0.2.0 declaration; the consumers
+advanced independently to v0.4.0 while this slice ran, still mismatched with
+v0.4.1. Saved-scan policy replay preserves CE's Grype evidence byte-for-byte.
+No consumer pin is bypassed or moved by this slice. The
+source-defect queue line is handed to the owner in docs/lictor-6.md and the
+report, not written to the read-only workspace wiki. Other inherited parser
+limitations, the reader migration and consumer pin updates remain adjacent;
+external filing is declined in this slice because those repositories are
+read-only. The release notes name each fix and the deliberate divergences.

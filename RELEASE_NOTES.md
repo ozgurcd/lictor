@@ -1,3 +1,32 @@
+# v0.4.1 — 2026-09-21
+
+Clockfuse now preserves NBSP, CR, VT and FF inside finding paths, matching the
+source awk field splitting instead of truncating those paths as Unicode whitespace.
+
+Route selection now refuses workflow file or directory symlinks that escape the
+selected repository, while preserving policy selection and Achta's judgements.
+
+Witness now records NUL or invalid UTF-8 output with one deterministic
+`binary-output:` line, omits that target's tool/evidence lines, and preserves
+its real exit code and the normal elapsed/target/finalization lines.
+
+The chosen NUL line is `binary-output: <target> contains NUL; evidence omitted`;
+invalid UTF-8 uses `contains invalid UTF-8` instead. Invalid label/citation text
+is rejected before opening a record. Captured text output is unchanged.
+This is the first explicitly ruled recorder divergence: the source grep emits
+`Binary file <random temporary path> matches`, while old Lictor copied raw NUL.
+Neither belongs in a reproducible text record. The owner's consumer premise is
+that no current target emits NUL; the six source record conformances remain
+byte-identical. Those six fixtures are not an exhaustive capture of every target.
+
+A second declared divergence is already shipped: malformed/overflowing
+clockfuse snapshot counts refuse with exit 2 instead of the source's exit 0
+after `integer expression expected`. It is unchanged in this release.
+Pin grammar, ANSI-blind evidence matching, duration-shaped prose counting and
+colon-path normalization limitations remain unchanged. No new command, rule row
+or schema version; the floor remains six armed rules. Archives remain
+Darwin/Linux on arm64/amd64. Consumer pin updates are separate work.
+
 # v0.4.0 — 2026-09-21
 
 Adds witness's execute half: argv plans, run/init/step/finalize, explicit all-target

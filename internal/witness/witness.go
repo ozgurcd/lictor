@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/ozgurcd/lictor/internal/executor"
 )
@@ -51,6 +52,9 @@ func Run(ctx context.Context, o Options, out, diagnostic io.Writer) Result {
 	}
 	if strings.ContainsAny(o.Label+o.Cites, "\n\r") {
 		return fail(2, fmt.Errorf("label and cites must be single lines"))
+	}
+	if !utf8.ValidString(o.Label) || !utf8.ValidString(o.Cites) || strings.ContainsRune(o.Label+o.Cites, 0) {
+		return fail(2, fmt.Errorf("label and cites must be UTF-8 text without NUL"))
 	}
 	if o.Tie != "" && o.Tie != "digest" && o.Tie != "commit" {
 		return fail(2, fmt.Errorf("unknown tie %q", o.Tie))
@@ -271,32 +275,47 @@ func one(ctx context.Context, o Options, e Entry, w, diag io.Writer) (int, error
 	if _, err = f.Seek(0, 0); err != nil {
 		return 2, err
 	}
-	// The source writes all tool lines before all evidence lines.
-	if e.Name == "tool-versions" {
-		if err = lines(f, func(s string) error { _, e := fmt.Fprintf(w, "tool: %s\n", s); return e }); err != nil {
-			return 2, err
-		}
-		if _, err = f.Seek(0, 0); err != nil {
-			return 2, err
-		}
-	}
-	count := 0
-	err = lines(f, func(s string) error {
-		if packages.MatchString(s) {
-			count++
-		}
-		if evidence.MatchString(s) {
-			_, err := fmt.Fprintf(w, "evidence: [%s] %s\n", e.Name, s)
-			return err
-		}
-		return nil
-	})
+	// Inspect all captured bytes before copying any line: a late NUL or
+	// invalid UTF-8 byte makes the entire target's output non-text.
+	kind, err := outputKind(f)
 	if err != nil {
 		return 2, err
 	}
-	if count > 0 {
-		if _, err = fmt.Fprintf(w, "evidence: [%s] go packages ok: %d\n", e.Name, count); err != nil {
+	if kind != "" {
+		if _, err = fmt.Fprintf(w, "binary-output: %s contains %s; evidence omitted\n", e.Name, kind); err != nil {
 			return 2, err
+		}
+	} else {
+		if _, err = f.Seek(0, 0); err != nil {
+			return 2, err
+		}
+		// The source writes all tool lines before all evidence lines.
+		if e.Name == "tool-versions" {
+			if err = lines(f, func(s string) error { _, e := fmt.Fprintf(w, "tool: %s\n", s); return e }); err != nil {
+				return 2, err
+			}
+			if _, err = f.Seek(0, 0); err != nil {
+				return 2, err
+			}
+		}
+		count := 0
+		err = lines(f, func(s string) error {
+			if packages.MatchString(s) {
+				count++
+			}
+			if evidence.MatchString(s) {
+				_, err := fmt.Fprintf(w, "evidence: [%s] %s\n", e.Name, s)
+				return err
+			}
+			return nil
+		})
+		if err != nil {
+			return 2, err
+		}
+		if count > 0 {
+			if _, err = fmt.Fprintf(w, "evidence: [%s] go packages ok: %d\n", e.Name, count); err != nil {
+				return 2, err
+			}
 		}
 	}
 	if total > Ceiling {
@@ -306,6 +325,19 @@ func one(ctx context.Context, o Options, e Entry, w, diag io.Writer) (int, error
 	}
 	_, err = fmt.Fprintf(w, "elapsed: %s %ds\ntarget: %s exit=%d\n", e.Name, elapsed, e.Name, ec)
 	return ec, err
+}
+
+func outputKind(r io.Reader) (string, error) {
+	kind := ""
+	err := lines(r, func(s string) error {
+		if strings.ContainsRune(s, 0) {
+			kind = "NUL"
+		} else if kind == "" && !utf8.ValidString(s) {
+			kind = "invalid UTF-8"
+		}
+		return nil
+	})
+	return kind, err
 }
 
 func lines(r io.Reader, fn func(string) error) error {
