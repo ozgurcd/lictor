@@ -326,3 +326,39 @@ and refusal of another live stepwise session. This does not promise that
 separate step invocations cannot interleave. The reader remains outside this
 port; no check judgement is implemented or tested here. Implementation and
 release proofs follow in their own commit.
+
+## 2026-09-21 — LICTOR-5 Amendment 1 recorder implementation
+
+v0.4.0 adds witness run/init/step/finalize, without check/selftest/sync-check.
+Plans are argv with quote removal, named pre-execution metacharacter refusal
+and ordered dependencies. Default run is fail-fast; --all retains verify-all's
+independent-target behavior. The source lock wait is 120 seconds, exit 3;
+stepwise-session refusal is exit 4. Dirty work never replaces an in-tree record.
+The 64 MiB recorder ceiling streams, truncates explicitly and keeps the target's
+real exit; the judges' 8 MiB limits and verdicts are unchanged.
+
+WITNESS-ONE-WRITER-1 is the owner's exact amended sentence. Truncation, live-lock
+and live-session mutations each failed the tagged test; restoration passed.
+Hash 4436b3cf02f6, FLOOR/RED-PROOFS 6; previous hashes unchanged. Seven capabilities.
+Digest, commit-tied and stepwise fixture records are byte-identical to the source.
+The two-target OSS engine comparison writes outside its tree and leaves HEAD
+and porcelain unchanged; its existing pin is not bypassed through the CLI.
+The 34-entry OSS plan parses; its doctored pipe refuses by target name.
+Nine MiB is retained whole; 65 MiB truncates and preserves exit 7.
+
+Tool lines remain unchanged: the wiki invokes Achta's witness reader, which
+recognizes tool: as informational syntax. The brief's keep-and-report branch
+is followed; the queue candidate is in docs/lictor-5.md, not an external edit.
+The inherited outside-tree EMPTY-TREE digest is diagnostic only, not a valid
+attestation. Per-invocation writer exclusion does not prove that separate
+step calls never interleave; the record reader remains the next row's work.
+
+make verify was green during implementation. The completed file set is checked
+again before commit and at the committed release head; publication and installed
+checksums follow in the slice report. Owner authority covers one annotated
+v0.4.0, fast-forward main/tag publication through the existing release workflow,
+one formula-only tap commit and local brew upgrade. No consumer switch or
+external wiki write is included. Full measurements and consumer follow-up are
+in docs/lictor-5.md. Expected reds are the initial stub tests and three deliberate
+mutations. Tool diagnostics included stale-graph review/unknown-symbol lookups,
+corrected with a rebuild/measured identity, and a refused no-op rehash.

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "lictor.witness.v1"
+    },
+    "repository": {
+      "type": "string"
+    },
+    "record": {
+      "type": "string"
+    },
+    "reason": {
+      "type": "string"
+    },
+    "exit_code": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 255
+    },
+    "minted": {
+      "type": "boolean"
+    },
+    "declared_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pinned": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "record",
+    "reason",
+    "exit_code",
+    "minted",
+    "declared_version",
+    "pinned"
+  ]
+}

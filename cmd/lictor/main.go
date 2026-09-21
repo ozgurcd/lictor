@@ -16,7 +16,7 @@ import (
 	"github.com/ozgurcd/lictor/internal/grype"
 )
 
-const version = "v0.3.0"
+const version = "v0.4.0"
 
 type evaluation struct {
 	Outcome string `json:"outcome"`
@@ -56,7 +56,7 @@ func commandError(wantJSON bool, out, errOut io.Writer, reason string) int {
 
 func run(ctx context.Context, args []string, out, errOut io.Writer, now func() time.Time) int {
 	if len(args) == 0 || args[0] == "help" || args[0] == "--help" {
-		fmt.Fprintln(out, "lictor: Identuum gate execution\nCommands: version, capabilities, grype, green, clockfuse, route\nUse lictor COMMAND --help for command options.")
+		fmt.Fprintln(out, "lictor: Identuum gate execution\nCommands: version, capabilities, grype, green, clockfuse, route, witness\nUse lictor COMMAND --help for command options.")
 		return 0
 	}
 	wantJSON := false
@@ -85,12 +85,15 @@ func run(ctx context.Context, args []string, out, errOut io.Writer, now func() t
 			fmt.Fprintln(out, "lictor "+version)
 			return 0
 		}
-		value := map[string]any{"schema_version": "lictor.capabilities.v1", "version": version, "commands": []string{"version", "capabilities", "grype", "green", "clockfuse", "route"}, "machine_interfaces": []string{"lictor.version.v1", "lictor.capabilities.v1", "lictor.grype.v1", "lictor.green.v1", "lictor.clockfuse.v1", "lictor.route.v1"}, "exit_codes": map[string]int{"pass": 0, "fail": 1, "cannot_evaluate": 2}, "repository_selection": "--repo absolute path; default current working directory", "replay": "grype -scan JSON -inventory JSON --as-of RFC3339; unchanged repository inputs required"}
+		value := map[string]any{"schema_version": "lictor.capabilities.v1", "version": version, "commands": []string{"version", "capabilities", "grype", "green", "clockfuse", "route", "witness"}, "machine_interfaces": []string{"lictor.version.v1", "lictor.capabilities.v1", "lictor.grype.v1", "lictor.green.v1", "lictor.clockfuse.v1", "lictor.route.v1", "lictor.witness.v1"}, "exit_codes": map[string]int{"pass": 0, "fail": 1, "cannot_evaluate": 2}, "repository_selection": "--repo absolute path; default current working directory", "replay": "grype -scan JSON -inventory JSON --as-of RFC3339; unchanged repository inputs required", "witness_exits": "run/finalize 0 green, 1 red, 2 cannot-evaluate; lock 3; session 4; step preserves target exit"}
 		if wantJSON {
 			return emit(out, value)
 		}
-		fmt.Fprintln(out, "lictor "+version+": version, capabilities, grype, green, clockfuse, route; exits 0 pass, 1 fail, 2 cannot_evaluate; --repo absolute path (default cwd); grype -scan with --as-of replays Lictor's dated judgement")
+		fmt.Fprintln(out, "lictor "+version+": version, capabilities, grype, green, clockfuse, route, witness; exits 0 pass, 1 fail, 2 cannot_evaluate; witness lock 3, session 4, step target exit; --repo absolute path (default cwd); grype -scan with --as-of replays Lictor's dated judgement")
 		return 0
+	}
+	if args[0] == "witness" {
+		return runWitness(ctx, args[1:], wantJSON, out, errOut)
 	}
 	if args[0] == "green" {
 		return runGreen(ctx, args[1:], wantJSON, out, errOut)

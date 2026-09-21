@@ -14,7 +14,7 @@ Lictor is Identuum-specific. A judgement useful to an unrelated workspace belong
 in the appropriate generic tool, never a parallel implementation here. Lictor may
 execute fixed tool invocations, with context cancellation, deadlines, an explicit
 environment allowlist and bounded output. It never invokes a shell, accepts an
-arbitrary executable command, mutates Git, reads local credential files, or makes
+executable command outside an explicit recorded witness plan, mutates Git, reads local credential files, or makes
 network requests itself. External tools retain their documented execution effects.
 The consumer Makefile remains responsible for any witness commit.
 
@@ -25,8 +25,8 @@ belong to a later authorized slice.
 ## 3. Command contracts
 
 `version` and `capabilities` are repository-independent. Each accepts `--json`.
-The release is v0.3.0; capabilities names version, capabilities, grype, green,
-clockfuse and route. Every repository command checks the first ci.yml line
+The release is v0.4.0; capabilities names version, capabilities, grype, green,
+clockfuse, route and witness. Every repository command checks the first ci.yml line
 matching `^  LICTOR_VERSION: (v[0-9][0-9.]*)`. A matching pin runs; a mismatch
 refuses with exit 2, one stderr line naming the declared version and the public
 brew install command, and no stdout (including under --json). Missing ci.yml or
@@ -228,9 +228,64 @@ workspace to Achta; Lictor neither discovers one nor manufactures one. An
 isolated runner without that layout still refuses in Achta. This is an adjacent
 Achta requirement for the consumer slice, not a reason to duplicate judgement.
 
+## Recorded execution
+
+`witness [run|init|step|finalize]` implements only the source recorder's execute
+half. Default run stops at the first red; --all attempts independent targets as
+verify-all does. Plan and --requires validation completes before locks, record
+writes or target execution. Dependencies name earlier planned entries only;
+blocked dependents record source-shaped NOT-RUN evidence and exit 125.
+POSIX quote removal supplies argv without expansion. Unquoted pipe, ampersand,
+semicolon, redirection, dollar, backtick, parentheses and newline refuse by
+target name. Direct shell executables refuse; make retains its own execution.
+
+Opening run/init truncates. Run excludes its selected record and GATE-RUN*.txt
+when deciding whether work is dirty; a dirty in-tree run writes only a temporary
+record and prints NOT MINTED. Stepwise init deliberately retains the source's
+CI behavior, permitting dirty work. Init owns a session through its parent PID;
+run and init refuse a live session, step/finalize do not claim session ownership.
+Finalization closes the session even when red. Missing records refuse. Symlink
+or non-regular record destinations refuse before opening.
+
+Locks and sessions share the script's canonical physical directory plus record
+basename, SHA-256 keyed as /tmp/gate-witness-<key>.lock and .session. Lock wait
+defaults to 120 seconds, polling once per second, with an explicit --lock-wait
+override. Dead holders/sessions are broken with the source notice. Catchable
+signals cancel CLI execution and deferred cleanup releases the acquired lock.
+Writer refusal exits match the source: lock 3, session 4; step keeps target exit.
+These are explicit exceptions to the general command exit contract; run/finalize
+otherwise use 0/1/2. Per-invocation exclusion is not a claim that independent
+step/finalize calls cannot interleave; check's judgement remains outside Lictor.
+
+Each target has a 30-minute default deadline, explicitly configurable by
+--timeout. Combined stdout/stderr streams to stderr and a temporary file; only
+the first 64 MiB are retained and mirrored. Excess is drained, not buffered;
+`truncated: NAME output exceeded 67108864 bytes; retained=67108864 total=N`
+is appended separately, preserving the real process exit. Startup, cancellation,
+timeout or output I/O failure refuses and leaves incomplete evidence. Judge
+adapters retain their 8 MiB fail-closed caps. Evidence lines allow 65 MiB per
+line while streaming the record, preserving carriage returns and final lines
+without a newline. Only the original EVIDENCE_RE matches, tool lines and Go
+package counts are retained; the spool is removed at command completion.
+
+Execution inherits the existing Go allowlist plus the three Grype cache/update
+variables. No ambient GATE_WITNESS_* changes the record: --cites, --tie and
+--sibling make those inputs explicit. --as-of freezes header/final/elapsed clock
+reads for replay; otherwise a supplied clock is sampled at each source-equivalent
+point. lictor.witness.v1 carries repository, record, reason, exit, whether a record
+was written, and pin metadata. Target output always goes to stderr under JSON.
+
+The source's outside-tree exclusion yields EMPTY-TREE. The port preserves that
+record byte contract; such a record is diagnostic, not a usable witness.
+Tool lines are preserved: Achta's allowedInformational parser recognizes tool:
+when the wiki calls witness check. The absolute-path cleanup remains adjacent.
+Source conformance is explicit `make witness-conformance SOURCE_SCRIPT=ABS
+ALL_SCRIPT=ABS CONSUMER=ABS`; unit tests require no sibling checkout. The conformance fixture
+supplies a fixed clock to both implementations, not timestamp normalization.
+
 ## 4. Migration inventory
 
-Rows 1 through 4 are implemented. Later commands are proposed, not capabilities. The
+Rows 1 through 4 and the execute half of row 5 are implemented. Later commands are proposed, not capabilities. The
 workspace retirement ledger remains the inventory owner; this snapshot records
 the charter's migration order with the measured Grype source count.
 
@@ -253,7 +308,7 @@ the charter's migration order with the measured Grype source count.
 ## 5. Consumer adoption
 
 Switch the consumers in a separately authorized consumer slice after release.
-Until their pins advance, v0.3.0 intentionally refuses their v0.2.0 declarations.
+Until their pins advance, v0.4.0 intentionally refuses their v0.2.0 declarations.
 Declare one LICTOR_VERSION and LICTOR_SHA256 and one derived CI download route;
 assert the installed version. Use public release URLs and published checksums;
 no private-release access or token is required.

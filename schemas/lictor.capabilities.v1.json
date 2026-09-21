@@ -7,7 +7,7 @@
       "const": "lictor.capabilities.v1"
     },
     "version": {
-      "const": "v0.3.0"
+      "const": "v0.4.0"
     },
     "commands": {
       "const": [
@@ -16,7 +16,8 @@
         "grype",
         "green",
         "clockfuse",
-        "route"
+        "route",
+        "witness"
       ]
     },
     "machine_interfaces": {
@@ -26,7 +27,8 @@
         "lictor.grype.v1",
         "lictor.green.v1",
         "lictor.clockfuse.v1",
-        "lictor.route.v1"
+        "lictor.route.v1",
+        "lictor.witness.v1"
       ]
     },
     "exit_codes": {
@@ -43,6 +45,10 @@
     "replay": {
       "type": "string",
       "minLength": 1
+    },
+    "witness_exits": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "required": [
@@ -52,6 +58,7 @@
     "machine_interfaces",
     "exit_codes",
     "repository_selection",
-    "replay"
+    "replay",
+    "witness_exits"
   ]
 }

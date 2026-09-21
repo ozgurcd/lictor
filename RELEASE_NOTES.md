@@ -1,3 +1,22 @@
+# v0.4.0 — 2026-09-21
+
+Adds witness's execute half: argv plans, run/init/step/finalize, explicit all-target
+and dependency handling, source-shaped gate-run.v1 records, dirty-work no-mint,
+bounded per-record locks and stepwise-session refusals. The six-rule floor adds
+mutation-proved WITNESS-ONE-WRITER-1. Capabilities now names seven commands.
+
+Recorder output streams under a 64 MiB per-target ceiling; truncation is explicit
+and retains the target's real exit. Other command limits and verdicts are unchanged.
+Digest and commit-tied fixture records are byte-identical to the source, as is
+the outside-tree OSS diagnostic record. Its inherited EMPTY-TREE digest is not
+a usable witness. Tool lines remain unchanged because an existing reader
+recognizes them. No record reader, selftest or mirror checker is ported.
+
+Consumers must move pins/checksums and choose run versus --all deliberately;
+their source copies remain until the reader migration. Per-invocation locks
+cannot promise that separate step calls never interleave. Archives remain
+Darwin/Linux on arm64/amd64.
+
 # v0.3.0 — 2026-09-21
 
 Every repository command now refuses an absent or mismatched LICTOR_VERSION;

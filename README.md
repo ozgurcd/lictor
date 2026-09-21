@@ -1,6 +1,6 @@
 # Lictor
 
-Identuum-specific gate execution. Current release: v0.3.0.
+Identuum-specific gate execution. Current release: v0.4.0.
 The binding charter is [PROJECT_DESC.md](PROJECT_DESC.md); implemented contracts,
 boundaries and the migration plan are in [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
@@ -35,7 +35,7 @@ Every repository command requires a matching LICTOR_VERSION in the consumer's
 .github/workflows/ci.yml. Absence or mismatch refuses with exit 2 and one stderr
 line, with no stdout. `--unpinned` permits deliberate non-consumer use with no
 declaration; it never bypasses a mismatch. JSON includes declared_version and
-pinned. The released v0.3.0 intentionally refuses consumers still pinned v0.2.0.
+pinned. The released v0.4.0 intentionally refuses consumers still pinned v0.2.0.
 
 The source judge's stdout evidence line is preserved. Human stderr separately
 names the selected repository and as_of; JSON carries the same evidence as
@@ -71,6 +71,41 @@ both Lictor keys in separate Achta calls. A declared ACHTA_VERSION must match;
 otherwise the installed version is printed. `--achta-workspace ABS` explicitly
 selects Achta's workspace when discovery is ambiguous. Achta still requires its
 wiki layout; Lictor does not fabricate one on an isolated runner.
+
+## Recorded execution
+
+`lictor witness --repo ABS --record GATE-RUN.txt --label TEXT -- name=argv...`
+runs a caller-declared gate plan and records gate-run.v1. POSIX quotes group
+arguments; there is no expansion or shell. Unquoted shell metacharacters refuse
+the entire plan before execution. Direct shell executables are refused; put
+shell-dependent work in a make target.
+
+Default `run` stops at the first failure. `--all` preserves verify-all's behavior:
+attempt independent targets, and use repeated `--requires a:b` to record a
+blocked dependent as NOT-RUN with exit 125. Dependencies must name earlier
+planned targets. `init` accepts plan names, `step` takes one name=argv entry,
+and `finalize` closes the same record. A missing target cannot finalize green.
+
+Dirty work runs without replacing an in-tree record. The source's per-record
+lock defaults to 120 seconds (`--lock-wait`); refusal is exit 3. A live stepwise
+session refuses run/init with exit 4. Steps preserve the target's exit code;
+run/finalize return 0 green, 1 red, or 2 cannot-evaluate. Sessions and locks use
+the source-compatible physical-path keys under /tmp. Separate steps can still
+interleave; only the external reader can judge such a record.
+
+Targets stream combined output to stderr and a temporary spool, capped at
+64 MiB per target. Overflow is drained, recorded with `truncated:`, and does not
+replace the target's real exit. Ordinary non-summary output remains on stderr;
+the record retains the source's evidence selection. Tool lines remain unchanged.
+`--timeout` defaults to 30 minutes per target; other commands retain their caps.
+`--cites`, `--tie commit`, and repeated `--sibling NAME=ABS` replace the source's
+corresponding environment inputs explicitly. `--as-of RFC3339` freezes the record
+clock for replay. `--json` emits one lictor.witness.v1 result.
+
+An outside-tree record preserves the source's EMPTY-TREE digest limitation;
+it is diagnostic only, not an attestation a reader can accept. `check`,
+`--selftest`, and `--sync-check` are not ported. Consumer pins and the four script
+copies remain until their separately authorized switch and reader migration.
 
 ## Validation
 
