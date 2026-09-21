@@ -24,3 +24,4 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-09-21 | co-versioned | LICTOR-3 charter: commit the owner's unchanged Row-2 ruling before implementing the green command. |
 | 2026-09-21 | co-versioned | LICTOR-3 implementation: v0.2.0 adds green, bounded Go execution, lictor.green.v1 and GREEN-FLOOR-1; eight source fixtures agree and OSS/CE pass without porcelain changes. |
 | 2026-09-21 | co-versioned | LICTOR-4 charter and stop: preserve the owner amendment unchanged; Achta cannot enforce required-key-only without a route match, so the UI route proof needs a generic-tool change before this port can finish. |
+| 2026-09-21 | co-versioned | LICTOR-4 Amendment 1 charter: preserve the owner amendment unchanged; runtime pin enforcement is fail-closed and route sets apply only where a tool is installed. |

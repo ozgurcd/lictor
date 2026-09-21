@@ -195,3 +195,15 @@ LICTOR_ASSERT macro with the absent-tool check plus Lictor's own self-check,
 switch clock-fuse-gate, add route targets, install pinned Achta on OSS/UI runners,
 and retire the vendored installation-gate copies and their digest pins. These
 are recorded here rather than filed into read-only sibling queues.
+
+## 2026-09-21 — LICTOR-4 Amendment 1 charter
+
+Commit the owner-controlled PROJECT_DESC.md byte-unchanged on top of 274f82f.
+SHA-256: cd04f8478605bef875a528883018bda2d5e0ddd882fde34e4baf6099dc240768.
+The owner resolves the earlier STOP: Lictor enforces its own version declaration
+at runtime, refusing absence unless --unpinned is explicit. Achta judges only
+installation route sets selected by non-comment install lines; no required-key-only
+judgement is added here. The retired repo-green selftest statement is corrected
+by the owner. This charter commit contains no implementation or release change.
+The implementation still owes pin, environment, line, clockfuse and route proofs,
+the full gate, v0.3.0 publication and Homebrew installation.
