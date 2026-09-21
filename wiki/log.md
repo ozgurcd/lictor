@@ -106,3 +106,40 @@ The Row-2 ruling preserves the source script's ordering, cause phrases and
 three outcomes, mapping its cannot-evaluate exit 3 to Lictor's exit 2. It excludes
 hook mode and bypass. The owner authorizes v0.2.0, the public Formula update and
 local upgrade in this slice. No implementation changes belong to this commit.
+
+## 2026-09-21 — LICTOR-3 implementation
+
+Added green as the second gate command, porting green_check and eight non-hook
+fixtures from wiki 662585b's 366-line repo-green-gate.sh. The floor still runs
+gofmt, build, vet and tests in that order, stopping at the first red and keeping
+-count=1 -timeout=120s. Source exit 3 maps to Lictor exit 2. A separate Go adapter
+bounds execution without altering the Grype package or adapter. Evidence names
+the base-name subject and Go version; JSON publishes lictor.green.v1.
+
+The CLI contract test first failed against the old dispatcher (unknown command:
+green). A fresh mutation that ignored every step failure made five fixture
+cases incorrectly GREEN, and all five failed. The restored port agrees with
+the script on all eight cases; an uncompilable test fails at vet on Go 1.27.1.
+GREEN-FLOOR-1 binds these tests. Consumer proofs passed on OSS 63ee215 and CE
+128dc78; every sibling's before/after porcelain and head were unchanged.
+
+The first source-comparison invocation passed its package-local flag to every
+package through make test, which rejected it. The corrected diagnostic selected
+internal/green only. Normal make test uses no custom flag. Initial Rulefloor
+arming refused the lowercase annotation; the required // RULE: annotation was
+added before arming. These were setup errors, not hidden green runs.
+
+PROJECT_SPEC.md now states public release URLs and checksums, without private
+access or a token. v0.2.0 updates version/capabilities contracts and dated release
+notes. Publication and installed-byte proof occur after this commit under the
+owner's explicit tag, push, tap and upgrade authority, and are in the final report.
+See docs/lictor-3.md for test predicates and measured evidence.
+
+OPEN AND ADJACENT: OSS and CE still need their own authorized switches to green,
+version assertions/pins and the runner's published platform checksum. Once the
+runner installs that release, repo-green no longer needs the wiki sibling and
+can run in CI. Neither consumer's plan changes here. The source's hook and wiki
+selftest remain; the last consumer's retirement is separate work. External queue
+filing is declined because all sibling repositories, including the wiki, are
+read-only in this slice. Gograph source lookup required exact current symbols;
+two nonexistent symbol queries refused and are counted in its audit.

@@ -22,3 +22,4 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-09-19 | co-versioned | LICTOR-1 amendment 1: dispatch the existing immutable release tag, restore its runner-local annotation and assert its target equals HEAD; commit the unchanged owner charter amendment. |
 | 2026-09-21 | co-versioned | LICTOR-2: document public Homebrew and CI release downloads without a token; preserve v0.1.0 code, schemas and release artifacts. |
 | 2026-09-21 | co-versioned | LICTOR-3 charter: commit the owner's unchanged Row-2 ruling before implementing the green command. |
+| 2026-09-21 | co-versioned | LICTOR-3 implementation: v0.2.0 adds green, bounded Go execution, lictor.green.v1 and GREEN-FLOOR-1; eight source fixtures agree and OSS/CE pass without porcelain changes. |

@@ -7,20 +7,22 @@
       "const": "lictor.capabilities.v1"
     },
     "version": {
-      "const": "v0.1.0"
+      "const": "v0.2.0"
     },
     "commands": {
       "const": [
         "version",
         "capabilities",
-        "grype"
+        "grype",
+        "green"
       ]
     },
     "machine_interfaces": {
       "const": [
         "lictor.version.v1",
         "lictor.capabilities.v1",
-        "lictor.grype.v1"
+        "lictor.grype.v1",
+        "lictor.green.v1"
       ]
     },
     "exit_codes": {

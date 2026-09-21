@@ -1,6 +1,6 @@
 # Lictor
 
-Identuum-specific gate execution. Current release: v0.1.0.
+Identuum-specific gate execution. Current release: v0.2.0.
 The binding charter is [PROJECT_DESC.md](PROJECT_DESC.md); implemented contracts,
 boundaries and the migration plan are in [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
@@ -24,6 +24,7 @@ assert `lictor version --json` before running a gate.
 make build
 ./bin/lictor version
 ./bin/lictor capabilities --json
+./bin/lictor green --repo /absolute/path/to/repository
 ./bin/lictor grype --repo /absolute/path/to/repository
 ./bin/lictor grype --repo /absolute/path/to/repository -scan report.json -inventory inventory.cdx.json --as-of 2026-09-19T00:00:00Z --json
 ```
@@ -39,6 +40,16 @@ declaration and ignored-path inputs. Run `lictor grype --help` for all flags.
 Live scans require Grype at the consumer's declared GRYPE_VERSION (source baseline
 0.119.0) and Git. Lictor leaves toolchain-parity ownership with the consumer.
 Executors have deadlines and output bounds; missing tools never pass.
+
+`green` runs gofmt, build, vet and tests in that order, stopping at the first red.
+The test invocation keeps `-count=1 -timeout=120s`. Human output names the subject
+by base name and the Go version. Exit 0 is GREEN, 1 NOT-GREEN, 2 CANNOT-EVALUATE
+(including a missing Go toolchain or go.mod). `--json` emits lictor.green.v1 with
+the same cause, subject, version and exit code plus the failing output excerpt.
+The excerpt is also on stderr: at most twelve lines and 16 KiB. Go test excerpts
+keep only FAIL headings and test-file lines. `lictor green --help` lists flags;
+omitting --repo selects cwd. No hook, bypass or selftest command is included.
+See PROJECT_SPEC.md for subprocess bounds and the Go environment allowlist.
 
 ## Validation
 

@@ -72,6 +72,35 @@ ORM, UUID allocator, HTTP client or generic command runner is introduced.
 CLI dispatch is in cmd/lictor, the policy in internal/grype, and fixed process
 adapters in internal/executor. Adapters import no command package.
 
+`green --repo ABSOLUTE_PATH [--json]` ports only repo-green-gate's check mode.
+Omitted --repo selects cwd. The policy in internal/green stops at the first red:
+`gofmt -l .`, `go build ./...`, `go vet ./...`, then
+`go test ./... -count=1 -timeout=120s`. It first obtains `go version` in the
+selected directory. Missing Go or go.mod is CANNOT-EVALUATE (exit 2, replacing
+the source script's 3); an evaluated floor failure is NOT-GREEN (1); all four
+steps passing is GREEN (0). Hook input, bypass and --selftest are not commands.
+Human stdout names the outcome, original cause phrase, repository base name and
+Go version (or explicitly unavailable). JSON is lictor.green.v1: outcome, cause,
+subject, go_version, excerpt and exit_code. No home path appears in the evidence
+line. Tool diagnostics may contain source paths; they are bounded, not redacted.
+
+Go execution uses fixed argv in internal/executor, no shell. Each floor step
+has a five-minute process bound; the inherited per-package test timeout remains
+120 seconds. Version probing has a 30-second bound. Combined stdout/stderr is
+limited to 8 MiB, then excerpted to twelve lines and at most 16 KiB; test failures
+retain only FAIL headings and test-file lines, as the source does. The excerpt
+is printed on stderr and included in JSON. Cancellation, output overflow or
+an unstartable tool refuses with exit 2, never a green verdict.
+
+The separate Go environment allowlist is PATH, HOME, TMPDIR, XDG_CACHE_HOME,
+GOCACHE, GOMODCACHE, GOPATH, GOROOT, GOENV, GOTOOLCHAIN, GOWORK, GOFLAGS, GOPROXY,
+GOSUMDB, GOPRIVATE, GONOPROXY, GONOSUMDB, GOOS, GOARCH, CGO_ENABLED, CC, CXX,
+SDKROOT and MACOSX_DEPLOYMENT_TARGET, with GIT_OPTIONAL_LOCKS=0 and LC_ALL=C.
+Go retains its own configuration and execution effects, including build caches
+and module downloads; Lictor neither reads credentials nor confines consumer
+tests. Offline fixture tests set proxy/sumdb off and use the local toolchain.
+The Grype adapter's environment and policy are unchanged.
+
 `make verify` runs toolchain-check, format-check, build, test, race, vet,
 staticcheck, govulncheck, tidy-check, rulefloor and wiki-check, serially. Default
 tests are offline fixtures. `make grype-scan REPO=/absolute/path` is an explicit
@@ -88,19 +117,20 @@ arm64/amd64 archives using CGO_ENABLED=0, trimpath, buildvcs and stripped symbol
 tar order, ownership and mtime are fixed and gzip omits timestamps. checksums.txt
 is checked before publication with RELEASE_NOTES.md. No Windows build is produced.
 A later owner-authorized release updates only Formula/lictor.rb in the Homebrew
-tap, using private download authentication when required, then verifies installed
-bytes. LICTOR-0 creates no tag, release or tap change.
+tap, using public release URLs and the published checksums without a token,
+then verifies installed bytes. The repository and releases are public since
+2026-09-20. LICTOR-0 created no tag, release or tap change.
 
 ## 4. Migration inventory
 
-Only row 1 is implemented. Other commands are proposed, not capabilities. The
+Rows 1 and 2 are implemented. Other commands are proposed, not capabilities. The
 workspace retirement ledger remains the inventory owner; this snapshot records
 the charter's migration order with the measured Grype source count.
 
 | Order | Program | Source | Lines | Rules bound | Why not achta | lictor command (proposed) |
 |---|---|---|---|---|---|---|
 | 1 | grype-gate | identuum-idp-oss `tools/grype-gate` | 1659 | GRYPE-FIXABLE-FAILS-1, GRYPE-SUBJECT-1 | vulnerability policy, outside achta's boundary by its spec; three consumers today | `lictor grype --repo` |
-| 2 | repo-green-gate | wiki `tools/repo-green-gate.sh` | 366 | none | executor (build/vet/gofmt/test now); achta declares no shell execution | `lictor green --repo` |
+| 2 | repo-green-gate | wiki `tools/repo-green-gate.sh` | 366 | GREEN-FLOOR-1 (created by the port) | executor (build/vet/gofmt/test now); achta declares no shell execution | `lictor green --repo` |
 | 3 | clockfuse-gate | wiki `tools/clockfuse-gate.sh` (+ OSS `tools/clockfuse`, 2048, test-policy analyzer) | 169 | none | test-policy analyzer | `lictor clockfuse --repo` |
 | 4 | rulefloor-install-gate | wiki `tools/rulefloor-install-gate.sh`, mirrored into OSS and ui `scripts/` | 196 | CI-LOCAL-PARITY-1 pins its digest | achta `toolchain check` covers the pin half only; the workflow scan for a second install route is policy | `lictor rulefloor-install --repo` |
 | 5 | gate-witness (run half) | wiki `tools/gate-witness.sh`, mirrored ×4 | 1039 | WITNESS-CLEAN-HEAD-1, WITNESS-ONE-RUN-PER-RECORD-1 name it; six more read its records | the RECORD half is achta's (`witness init/step/finalize/check`, ledger row 19, order 2, LAST); the RUN half executes targets | `lictor witness run --repo` calling achta for the record |
@@ -117,7 +147,8 @@ the charter's migration order with the measured Grype source count.
 
 Switch one consumer per slice, after an explicitly authorized Lictor release.
 Declare one LICTOR_VERSION and LICTOR_SHA256 and one derived CI download route;
-assert the installed version. Resolve private-release access before switching.
+assert the installed version. Use public release URLs and published checksums;
+no private-release access or token is required.
 Replace the existing program invocation with `lictor COMMAND --repo "$(CURDIR)"`,
 retain its evidence line, and replace the copied-file digest with a version pin in
 toolchain parity. Remove that consumer's copy or sibling-path call in the same

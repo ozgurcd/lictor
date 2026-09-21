@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "lictor.green.v1"
+    },
+    "outcome": {
+      "enum": [
+        "GREEN",
+        "NOT-GREEN",
+        "CANNOT-EVALUATE"
+      ]
+    },
+    "cause": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subject": {
+      "type": "string",
+      "minLength": 1
+    },
+    "go_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "excerpt": {
+      "type": "string",
+      "maxLength": 16384
+    },
+    "exit_code": {
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "outcome",
+    "cause",
+    "subject",
+    "go_version",
+    "excerpt",
+    "exit_code"
+  ],
+  "oneOf": [
+    {
+      "properties": {
+        "outcome": {
+          "const": "GREEN"
+        },
+        "exit_code": {
+          "const": 0
+        }
+      }
+    },
+    {
+      "properties": {
+        "outcome": {
+          "const": "NOT-GREEN"
+        },
+        "exit_code": {
+          "const": 1
+        }
+      }
+    },
+    {
+      "properties": {
+        "outcome": {
+          "const": "CANNOT-EVALUATE"
+        },
+        "exit_code": {
+          "const": 2
+        }
+      }
+    }
+  ]
+}
