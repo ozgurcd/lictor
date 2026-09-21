@@ -97,3 +97,12 @@ PROJECT_DESC.md's older release-shape bullet still names private authentication,
 while its updated public-repository ruling and this brief settle the public
 route. Those files are outside this edit scope. External queue filing is declined
 because the workspace wiki and consumers are read-only.
+
+## 2026-09-21 — LICTOR-3 charter
+
+Committed the owner's PROJECT_DESC.md unchanged before the green port, SHA-256
+c5cf54faa3b45e55e197fca70efceece8413e11cda27937552afc102127d09f3.
+The Row-2 ruling preserves the source script's ordering, cause phrases and
+three outcomes, mapping its cannot-evaluate exit 3 to Lictor's exit 2. It excludes
+hook mode and bypass. The owner authorizes v0.2.0, the public Formula update and
+local upgrade in this slice. No implementation changes belong to this commit.
