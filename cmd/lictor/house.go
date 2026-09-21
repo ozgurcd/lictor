@@ -60,6 +60,10 @@ func runHouse(ctx context.Context, command string, args []string, wantJSON bool,
 	if !allowed {
 		return 2
 	}
+	fmt.Fprintf(errOut, "repository: %s\n", root)
+	if achtaWorkspace != "" {
+		fmt.Fprintf(errOut, "achta workspace: %s\n", achtaWorkspace)
+	}
 	if command == "clockfuse" {
 		r := clockfuse.Run(ctx, root, snapshot, executor.GoTools{})
 		if wantJSON {

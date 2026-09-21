@@ -269,3 +269,14 @@ clock-fuse-gate, adopts route, supplies pinned Achta and its workspace prerequis
 on runners, and retires copied scripts/digest pins after the last switch.
 No consumer macro, snapshot, gate record, policy or external queue is edited.
 Installed v0.3.0 refusing the consumers' v0.2.0 declarations is intentional.
+
+## 2026-09-21 — LICTOR-4 Amendment 1 selected-repository context
+
+Final contract review after the green 9055f5a gate found that native clockfuse
+pass text and skipped route lines do not themselves name the selected tree.
+The strengthened CLI snapshot/check proof first failed with empty stderr.
+The dispatcher now names the selected repository on stderr after pin acceptance,
+and prints an explicitly supplied Achta workspace there too. Native stdout is
+unchanged and pin refusals still emit exactly their one required line.
+This closes the charter's request-selection visibility requirement before the
+single v0.3.0 tag; no consumer, rule, version or release scope changes.

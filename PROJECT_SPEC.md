@@ -147,6 +147,9 @@ above and a five-minute/8 MiB bound. Analyzer exit status is tolerated as in the
 source wrapper; process startup errors, cancellation and overflow refuse.
 The analyzer and the separate deadline gate remain consumer-owned. Missing
 `tools/clockfuse` or `.clockfuse-snapshot` refuses by name with exit 2 (source 3).
+Human clockfuse and route execution names the selected repository on stderr,
+leaving native stdout evidence unchanged. An explicitly selected Achta workspace
+is also printed there. Pin refusals remain exactly one stderr line.
 Check mode writes nothing. Normalization preserves the source grep filter,
 POSIX sed substitution, sort-before-count order and awk first-field behavior,
 including unmatched filtered lines. Comparison permits removals and line-number

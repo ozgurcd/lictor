@@ -55,7 +55,7 @@ func TestClockfuseCLIExplicitSnapshotThenReadOnlyCheck(t *testing.T) {
 	}
 	code, human, stderr := invoke(t, "clockfuse", "--repo", root)
 	after, err := os.ReadFile(filepath.Join(root, ".clockfuse-snapshot"))
-	if code != 0 || err != nil || human != "clockfuse-gate: no findings above snapshot." || string(before) != string(after) {
+	if code != 0 || err != nil || human != "clockfuse-gate: no findings above snapshot." || string(before) != string(after) || !strings.Contains(stderr, "repository: "+root) {
 		t.Fatalf("check: %d %q %q %v", code, human, stderr, err)
 	}
 	_, doc, _ := invoke(t, "clockfuse", "--repo", root, "--json")
