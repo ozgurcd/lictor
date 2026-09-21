@@ -280,3 +280,38 @@ and prints an explicitly supplied Achta workspace there too. Native stdout is
 unchanged and pin refusals still emit exactly their one required line.
 This closes the charter's request-selection visibility requirement before the
 single v0.3.0 tag; no consumer, rule, version or release scope changes.
+
+## 2026-09-21 — LICTOR-5 charter and record-reader boundary
+
+The owner's PROJECT_DESC.md is committed byte-unchanged first, SHA-256
+`a42c5039d6407bfac60e16c7bfd1a4eda284b1b636ed780322a1a504ca5a3074`.
+Its four new rulings cover execute-only scope, argv plans, the 64 MiB recorder
+ceiling and the gate-run.v1 record contract. No Go implementation is changed.
+
+STOP: required item 6 asks for the exact OSS WITNESS-ONE-RUN-PER-RECORD-1
+sentence, measured at OSS e642f92f78e32b95242e83a73038d2fa34292fbe,
+RULE-FLOOR.md:253:
+
+> A gate-run record carries ONE run's evidence: check REFUSES any record with more than one gate header or more than one result verdict, naming how many of each it found, so a record two runs wrote into cannot be believed even though the interleaving that produces it is still possible.
+
+The source implements that judgement in gate-witness.sh check_mode:545-550,
+not in run/init/step/finalize. Its comments explicitly call it a reader
+backstop, not a writer fix. A scratch record inside Lictor with two headers
+and two verdicts was measured against the unchanged workspace script:
+exit 1, `GATE-WITNESS INTERLEAVED`, naming `2 'gate:' header(s)` and
+`2 'result:' verdict(s)`. No consumer record was written.
+
+The brief forbids porting check, --selftest or --sync-check; charter section 2
+also leaves generic record judgement to Achta. Writer-lock tests would not
+prove the required sentence, and calling the sibling reader from the port's
+unit tests would retain the sibling dependency this migration removes.
+The exact reader rule cannot honestly be armed against an execute-only port.
+An owner ruling must supply the intended execute-side rule or explicitly
+change the record-reader scope. The existing floor remains five, with no
+changed assertions. No v0.4.0 tag, release, tap update or upgrade is made.
+
+The consumer switch still owes verify-all.sh plan/dependency handling,
+GATE_RECORD_DRIVER integration, and the version/checksum pins. The four
+script copies remain until check's record judgement moves to Achta.
+The argv, record-conformance, refusal and output-ceiling implementation
+proofs are not claimed; implementation stops at this binding conflict.
