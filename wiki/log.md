@@ -397,3 +397,13 @@ report, not written to the read-only workspace wiki. Other inherited parser
 limitations, the reader migration and consumer pin updates remain adjacent;
 external filing is declined in this slice because those repositories are
 read-only. The release notes name each fix and the deliberate divergences.
+
+## 2026-09-22 — LICTOR-7 charter
+
+Commit the owner's PROJECT_DESC.md amendment byte-unchanged, SHA-256
+a3150eefa8768613b0a1c3c753fefd9c96346cc6d474ac748a2da3769061a887,
+on top of 471544f before any implementation. The ruling requires witness
+--all on dirty work to print the complete scratch record and the source's
+not-minted notices, preserving the committed record and overall outcome.
+Fail-fast run and record judging are unchanged. This commit records the
+requirement; it makes no claim that the behavior is implemented or released.
