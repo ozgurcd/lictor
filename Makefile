@@ -41,7 +41,7 @@ clockfuse-conformance: directories
 
 .PHONY: witness-conformance
 witness-conformance: directories
-	go test ./internal/witness -count=1 -timeout=120s -v -witness-source-script "$(SOURCE_SCRIPT)" -witness-all-script "$(ALL_SCRIPT)" -witness-consumer "$(CONSUMER)"
+	go test ./internal/witness -count=1 -timeout=120s -v -witness-source-script "$(SOURCE_SCRIPT)" -witness-all-script "$(ALL_SCRIPT)" -witness-consumer "$(CONSUMER)" $(TEST_ARGS)
 
 race: directories
 	go test -race ./... -count=1 -timeout=120s

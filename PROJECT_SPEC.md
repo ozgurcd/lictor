@@ -25,7 +25,7 @@ belong to a later authorized slice.
 ## 3. Command contracts
 
 `version` and `capabilities` are repository-independent. Each accepts `--json`.
-The release is v0.4.1; capabilities names version, capabilities, grype, green,
+The release is v0.4.2; capabilities names version, capabilities, grype, green,
 clockfuse, route and witness. Every repository command checks the first ci.yml line
 matching `^  LICTOR_VERSION: (v[0-9][0-9.]*)`. A matching pin runs; a mismatch
 refuses with exit 2, one stderr line naming the declared version and the public
@@ -244,7 +244,18 @@ target name. Direct shell executables refuse; make retains its own execution.
 
 Opening run/init truncates. Run excludes its selected record and GATE-RUN*.txt
 when deciding whether work is dirty; a dirty in-tree run writes only a temporary
-record and prints NOT MINTED. Stepwise init deliberately retains the source's
+record and prints NOT MINTED. Under dirty human --all, stderr is exactly
+`GATE-WITNESS NOT MINTING: dirty work; <record> remains untouched` before
+execution; target banners and combined output go to stdout, followed by the
+complete finalized scratch record and
+`GATE-WITNESS NOT MINTED: dirty work; <record> is untouched`. This mode omits
+the extra repository context line to preserve the source streams exactly.
+JSON still names the repository and carries one lictor.witness.v1 result,
+with target output on stderr. Default fail-fast run keeps its previous output.
+The requested record is never opened for writing on the dirty path; the overall
+exit remains 0/1, with dependent targets recorded as NOT-RUN 125. The rule
+WITNESS-DIRTY-ECHO-1 binds the four source assertions over green, red and
+dependency-blocked fixtures. Stepwise init deliberately retains the source's
 CI behavior, permitting dirty work. Init owns a session through its parent PID;
 run and init refuse a live session, step/finalize do not claim session ownership.
 Finalization closes the session even when red. Missing records refuse. Symlink
@@ -261,7 +272,8 @@ otherwise use 0/1/2. Per-invocation exclusion is not a claim that independent
 step/finalize calls cannot interleave; check's judgement remains outside Lictor.
 
 Each target has a 30-minute default deadline, explicitly configurable by
---timeout. Combined stdout/stderr streams to stderr and a temporary file; only
+--timeout. Except for dirty human --all above, combined stdout/stderr streams
+to stderr and a temporary file; only
 the first 64 MiB are retained and mirrored. Excess is drained, not buffered;
 `truncated: NAME output exceeded 67108864 bytes; retained=67108864 total=N`
 is appended separately, preserving the real process exit. Startup, cancellation,
@@ -321,7 +333,7 @@ the charter's migration order with the measured Grype source count.
 ## 5. Consumer adoption
 
 Switch the consumers in a separately authorized consumer slice after release.
-Until their pins advance, v0.4.1 intentionally refuses older version declarations.
+Until their pins advance, v0.4.2 intentionally refuses older version declarations.
 Declare one LICTOR_VERSION and LICTOR_SHA256 and one derived CI download route;
 assert the installed version. Use public release URLs and published checksums;
 no private-release access or token is required.

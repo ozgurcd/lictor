@@ -1,3 +1,16 @@
+# v0.4.2 — 2026-09-22
+
+Dirty `witness --all` now reproduces verify-all's complete diagnostic record:
+the exact NOT MINTING stderr notice, target output and finalized scratch record
+on stdout, and the exact NOT MINTED notice. The committed record is untouched;
+green, red and dependency NOT-RUN plans retain their outcomes. Full unfiltered
+stdout/stderr comparisons against the source pass for all three plans.
+Default fail-fast run is byte-identical on clean and dirty fixtures. JSON remains
+lictor.witness.v1 with target diagnostics on stderr; check is not implemented.
+WITNESS-DIRTY-ECHO-1 brings the armed floor and observed red proofs to seven.
+No consumer is switched by this release; the existing two declared source
+divergences remain unchanged.
+
 # v0.4.1 — 2026-09-21
 
 Clockfuse now preserves NBSP, CR, VT and FF inside finding paths, matching the

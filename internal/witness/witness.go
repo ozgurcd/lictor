@@ -24,6 +24,9 @@ type Options struct {
 	All                                   bool
 	LockWait, Timeout                     time.Duration
 	Now                                   func() time.Time
+	// TargetOutput overrides the source-compatible dirty --all target stream
+	// for JSON callers, whose stdout must remain one result document.
+	TargetOutput io.Writer
 }
 
 type Result struct {
@@ -140,7 +143,11 @@ func Run(ctx context.Context, o Options, out, diagnostic io.Writer) Result {
 		_ = f.Close()
 		defer os.Remove(path)
 		o.Record = path
-		fmt.Fprintf(diagnostic, "gate-witness: NOT MINTING — the tree (%s) is dirty beyond the gate records; every target runs and the verdict is printed, but no record is written and %s stays as it is\n", workState, original)
+		if o.All {
+			fmt.Fprintf(diagnostic, "GATE-WITNESS NOT MINTING: dirty work; %s remains untouched\n", original)
+		} else {
+			fmt.Fprintf(diagnostic, "gate-witness: NOT MINTING — the tree (%s) is dirty beyond the gate records; every target runs and the verdict is printed, but no record is written and %s stays as it is\n", workState, original)
+		}
 	}
 	flags := os.O_WRONLY | os.O_APPEND
 	if o.Mode == "run" || o.Mode == "init" {
@@ -166,6 +173,13 @@ func Run(ctx context.Context, o Options, out, diagnostic io.Writer) Result {
 		return r
 	}
 	overall := 0
+	targetOutput := diagnostic
+	if dirty && o.All {
+		targetOutput = out
+		if o.TargetOutput != nil {
+			targetOutput = o.TargetOutput
+		}
+	}
 	completed := map[string]int{}
 	for _, e := range entries {
 		if ctx.Err() != nil {
@@ -186,9 +200,12 @@ func Run(ctx context.Context, o Options, out, diagnostic io.Writer) Result {
 		var ec int
 		if blocked != "" {
 			ec = 125
+			if dirty && o.All {
+				fmt.Fprintf(targetOutput, "==> gate-witness: %s\ncheck FAILED: NOT-RUN %s: %s\n", e.Name, e.Name, blocked)
+			}
 			_, err = fmt.Fprintf(f, "evidence: [%s] check FAILED: NOT-RUN %s: %s\nelapsed: %s 0s\ntarget: %s exit=125\n", e.Name, e.Name, blocked, e.Name, e.Name)
 		} else {
-			ec, err = one(ctx, o, e, f, diagnostic)
+			ec, err = one(ctx, o, e, f, targetOutput)
 		}
 		if err != nil {
 			return fail(2, err)
@@ -222,7 +239,23 @@ func Run(ctx context.Context, o Options, out, diagnostic io.Writer) Result {
 	r.ExitCode = overall
 	r.Minted = !dirty
 	r.Reason = "gate-witness: " + original + " result: " + verdict
-	if dirty {
+	if dirty && o.All {
+		// Reopen the completed scratch record for a streaming, exact-byte echo.
+		// The requested record has never been opened for writing.
+		echo, e := os.Open(path)
+		if e != nil {
+			return fail(2, e)
+		}
+		_, e = io.Copy(out, echo)
+		closeErr := echo.Close()
+		if e != nil {
+			return fail(2, e)
+		}
+		if closeErr != nil {
+			return fail(2, closeErr)
+		}
+		r.Reason = fmt.Sprintf("GATE-WITNESS NOT MINTED: dirty work; %s is untouched", original)
+	} else if dirty {
 		remedy := "Commit the work, then run this gate again at the clean HEAD to mint the record and witness it."
 		if overall != 0 {
 			remedy = "Fix the red target(s) above, commit, and run again at the clean HEAD."

@@ -407,3 +407,41 @@ on top of 471544f before any implementation. The ruling requires witness
 not-minted notices, preserving the committed record and overall outcome.
 Fail-fast run and record judging are unchanged. This commit records the
 requirement; it makes no claim that the behavior is implemented or released.
+
+## 2026-09-22 — LICTOR-7 THE-ECHO-THE-FIFTH-SITE-NEEDS
+
+Dirty human witness --all now follows verify-all.sh's complete stdout and
+stderr contract, including target output, the finalized scratch record and
+both exact notices. It never opens the requested record for writing. The
+more specific owner ruling makes this an exception to the usual stderr
+target stream and repository context prefix; JSON retains its single
+lictor.witness.v1 document and stderr target output. Default fail-fast run
+is unchanged. The new rule has a directly observed pre-fix red proof; no
+existing rule binding is changed. Amendment 1 authorizes the one old --all
+notice assertion in TestDirtyRedLeavesRecordAndRunsTargets to follow the new
+notice, preserving every other assertion. A literal census found no sibling
+old-phrase assertions. The version schema's constant advances to v0.4.2.
+
+The new fixture fails against v0.4.1 with zero target lines and the wrong
+not-minted notice; green, exit-7 and NOT-RUN plans pass after the change.
+Unfiltered CLI stdout/stderr match the source at OSS cd79b68 for all three,
+with identical overall exits and unchanged committed-record SHA-256.
+Clean and dirty fail-fast output and record bytes agree with the saved
+pre-change binary before the version bump. All six existing record
+conformances pass, including read-only OSS with its held GATE-RUN.txt.
+Measurements and assertion counts are in docs/lictor-7.md. make verify is
+required before this commit and again at the committed release head; the
+final report carries the actual validation, publication and installation results.
+
+The initial full gate stopped on the unchanged v0.4.1 version-schema constant
+and that old --all notice assertion. No release or implementation commit was
+made over those reds. Amendment 1 explicitly authorizes both corrections;
+the charter commit 2a7cd87 remains separate and unchanged.
+
+Release authority is the LICTOR-7 owner's explicit authorization for main,
+one annotated v0.4.2 tag, the existing release workflow, a single formula
+commit and brew upgrade. No consumer switch or workspace-wiki write occurs.
+Consumer follow-up remains OSS verify's switch, deletion of verify-all.sh,
+removal of verify-check.sh's corresponding branch and replacement of the
+driver-string assertion in verify_all_test.go. External filing is declined
+because the consumers and workspace wiki are read-only in this slice.

@@ -2,7 +2,7 @@
 title: Lictor
 status: authoritative
 co_versioned: true
-verified: 2026-09-21
+verified: 2026-09-22
 ---
 
 # Lictor
@@ -33,3 +33,4 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-09-21 | co-versioned | LICTOR-5 Amendment 1 implementation: v0.4.0 adds argv witness execution, source-identical records, dirty-work no-mint, writer locks/sessions and 64 MiB output handling; six rules, seven commands, consumer read-only conformance; the reader remains outside the port. |
 | 2026-09-21 | co-versioned | LICTOR-6 Amendment 1: preserve owner charter 6039414b byte-unchanged; v0.4.1 preserves source clockfuse path bytes, confines route reads, and records binary output deterministically with real exits; six record conformances and six armed rules retained; declared source divergences and queue handoff in docs/lictor-6.md. |
 | 2026-09-22 | co-versioned | LICTOR-7 charter: preserve the owner's unchanged dirty-tree all-target ruling before implementation; fail-fast run and record judging remain outside this change. |
+| 2026-09-22 | co-versioned | LICTOR-7 implementation: v0.4.2 echoes dirty --all scratch records with source-identical streams; green, red and NOT-RUN proofs preserve the committed record; WITNESS-DIRTY-ECHO-1 raises the armed floor and observed red proofs to seven. |

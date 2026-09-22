@@ -62,7 +62,7 @@ func TestDirtyRedLeavesRecordAndRunsTargets(t *testing.T) {
 	_ = os.WriteFile(filepath.Join(o.Repo, o.Record), []byte("prior"), 0600)
 	_ = os.WriteFile(filepath.Join(o.Repo, "tracked"), []byte("dirty"), 0600)
 	r, out, diag := invoke(o)
-	if r.ExitCode != 1 || record(t, o) != "prior" || !strings.Contains(out, "red on a DIRTY tree") || !strings.Contains(diag, "NOT MINTING") {
+	if r.ExitCode != 1 || record(t, o) != "prior" || !strings.Contains(out, "GATE-WITNESS NOT MINTED: dirty work; GATE-RUN.txt is untouched") || !strings.Contains(diag, "NOT MINTING") {
 		t.Fatalf("dirty red: %+v %s %s", r, out, diag)
 	}
 	if _, err := os.Stat(marker); err != nil {

@@ -38,7 +38,7 @@ func runWitness(ctx context.Context, args []string, wantJSON bool, out, diag io.
 	var requires, siblings many
 	fs.Var(&requires, "requires", "target:earlier-prerequisite; repeatable")
 	fs.Var(&siblings, "sibling", "NAME=absolute-path to include at finalization; repeatable")
-	fs.BoolVar(&o.All, "all", false, "attempt all independent targets, as verify-all; default run stops on first failure")
+	fs.BoolVar(&o.All, "all", false, "attempt all independent targets; dirty human runs echo the scratch record and target output to stdout without minting")
 	fs.DurationVar(&o.LockWait, "lock-wait", 120*time.Second, "bounded per-record wait; source default 120s; refusal exit 3")
 	fs.DurationVar(&o.Timeout, "timeout", 30*time.Minute, "per-target execution bound")
 	var asOf string
@@ -74,14 +74,23 @@ func runWitness(ctx context.Context, args []string, wantJSON bool, out, diag io.
 	o.Entries = fs.Args()
 	o.Requires = requires
 	o.Siblings = siblings
-	fmt.Fprintf(diag, "repository: %s\n", o.Repo)
+	// Dirty human --all has the source driver's exact stdout/stderr contract.
+	// Other invocations retain repository context, including JSON callers.
+	deferContext := o.Mode == "run" && o.All && !wantJSON
+	if !deferContext {
+		fmt.Fprintf(diag, "repository: %s\n", o.Repo)
+	}
 	ctx, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 	defer stop()
 	dst := out
 	if wantJSON {
 		dst = io.Discard
+		o.TargetOutput = diag
 	}
 	r := witness.Run(ctx, o, dst, diag)
+	if deferContext && (r.Minted || r.ExitCode >= 2) {
+		fmt.Fprintf(diag, "repository: %s\n", o.Repo)
+	}
 	if wantJSON {
 		if emit(out, struct {
 			witness.Result
