@@ -7,8 +7,9 @@ verified: 2026-09-30
 
 # Lictor
 
-Module: github.com/ozgurcd/lictor. Release v0.3.0 adds runtime pin enforcement,
-clockfuse and delegated installation routes; the Grype policy is unchanged.
+Module: github.com/ozgurcd/lictor. Release v0.4.3 adds explicit SPDX/CycloneDX
+SBOM subjects with exact-byte digest evidence and fail-closed replay; the
+vulnerability and allowlist policy is unchanged.
 Lictor executes Identuum gates; generic tools retain their judgements. The first
 command is grype, ported from OSS 1cbe9f6c1df8dee83f8ba93e66217cf170b454a7.
 CLI, policy and fixed tool execution occupy separate packages. make verify is
@@ -35,3 +36,4 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-09-22 | co-versioned | LICTOR-7 charter: preserve the owner's unchanged dirty-tree all-target ruling before implementation; fail-fast run and record judging remain outside this change. |
 | 2026-09-22 | co-versioned | LICTOR-7 implementation: v0.4.2 echoes dirty --all scratch records with source-identical streams; green, red and NOT-RUN proofs preserve the committed record; WITNESS-DIRTY-ECHO-1 raises the armed floor and observed red proofs to seven. |
 | 2026-09-30 | co-versioned | agent-lictor-sbom: explicit SPDX/CycloneDX subject, basename and exact-byte SHA-256 evidence, directory predicates not applicable, unchanged vulnerability policy and fail-closed unbound replay; GRYPE-SBOM-1 and real scanner measurements in docs/sbom.md; Unreleased only. |
+| 2026-09-30 | co-versioned | agent-lictor-patch-release: v0.4.3 version and schema constants, SBOM README usage and dated release notes; owner-authorized main/tag publication and Homebrew formula/install, with final remote and installation evidence in the release report. |

@@ -457,3 +457,13 @@ missing scanner, fixed-time CLI and existing-subject parity have offline proofs.
 PROJECT_DESC.md remains the owner's untouched and unstaged edit. Release version
 stays v0.4.2 with an Unreleased note; no consumer, tap, tag, push or release work.
 No adjacent item was opened by this slice.
+
+## [2026-09-30] release | agent-lictor-patch-release
+
+Prepare v0.4.3 with all release constants aligned, public SBOM usage in README,
+and dated release notes. The owner authorized docs, commits, pushes, a patch
+release and Homebrew installation. Publication uses the annotated v0.4.3 tag
+and existing release workflow; the formula takes the published archive hashes.
+The final report records validation, remote refs and installed-byte verification.
+PROJECT_DESC.md remains the owner's unchanged, unstaged edit. No consumer pins
+or parent-wiki files are changed; consumer migration remains separately scoped.

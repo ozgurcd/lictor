@@ -25,7 +25,7 @@ belong to a later authorized slice.
 ## 3. Command contracts
 
 `version` and `capabilities` are repository-independent. Each accepts `--json`.
-The release is v0.4.2; capabilities names version, capabilities, grype, green,
+The release is v0.4.3; capabilities names version, capabilities, grype, green,
 clockfuse, route and witness. Every repository command checks the first ci.yml line
 matching `^  LICTOR_VERSION: (v[0-9][0-9.]*)`. A matching pin runs; a mismatch
 refuses with exit 2, one stderr line naming the declared version and the public
@@ -351,7 +351,7 @@ the charter's migration order with the measured Grype source count.
 ## 5. Consumer adoption
 
 Switch the consumers in a separately authorized consumer slice after release.
-Until their pins advance, v0.4.2 intentionally refuses older version declarations.
+Until their pins advance, v0.4.3 intentionally refuses older version declarations.
 Declare one LICTOR_VERSION and LICTOR_SHA256 and one derived CI download route;
 assert the installed version. Use public release URLs and published checksums;
 no private-release access or token is required.

@@ -1,6 +1,6 @@
 # Lictor
 
-Identuum-specific gate execution. Current release: v0.4.2.
+Identuum-specific gate execution. Current release: v0.4.3.
 The binding charter is [PROJECT_DESC.md](PROJECT_DESC.md); implemented contracts,
 boundaries and the migration plan are in [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
@@ -26,6 +26,7 @@ make build
 ./bin/lictor capabilities --json
 ./bin/lictor green --repo /absolute/path/to/repository
 ./bin/lictor grype --repo /absolute/path/to/repository
+./bin/lictor grype --repo /absolute/path/to/repository --sbom production.spdx.json --as-of 2026-09-30T00:00:00Z
 ./bin/lictor clockfuse --repo /absolute/path/to/repository
 ./bin/lictor route --repo /absolute/path/to/repository
 ./bin/lictor grype --repo /absolute/path/to/repository -scan report.json -inventory inventory.cdx.json --as-of 2026-09-19T00:00:00Z --json
@@ -35,7 +36,7 @@ Every repository command requires a matching LICTOR_VERSION in the consumer's
 .github/workflows/ci.yml. Absence or mismatch refuses with exit 2 and one stderr
 line, with no stdout. `--unpinned` permits deliberate non-consumer use with no
 declaration; it never bypasses a mismatch. JSON includes declared_version and
-pinned. The released v0.4.2 intentionally refuses consumers pinned to another version.
+pinned. The released v0.4.3 intentionally refuses consumers pinned to another version.
 
 The source judge's stdout evidence line is preserved. Human stderr separately
 names the selected repository and as_of; JSON carries the same evidence as
@@ -48,6 +49,15 @@ declaration and ignored-path inputs. Run `lictor grype --help` for all flags.
 Live scans require Grype at the consumer's declared GRYPE_VERSION (source baseline
 0.119.0) and Git. Lictor leaves toolchain-parity ownership with the consumer.
 Executors have deadlines and output bounds; missing tools never pass.
+
+`grype --sbom FILE` scans an SPDX or CycloneDX SBOM through Grype. Evidence names
+the file by basename and SHA-256 of the exact bytes scanned. Directory
+configuration comparison and ignored-tree coverage are explicitly not applicable;
+the existing vulnerability and allowlist policy still applies, including failure
+for an allowlisted High. Inputs must be readable regular files no larger than
+64 MiB. Invalid input or an unavailable scanner exits 2. SBOM replay with -scan
+is refused because Grype reports do not bind the exact input bytes; omit -scan
+to run a fresh scan. See [the measurement and fixtures](docs/sbom.md).
 
 `green` runs gofmt, build, vet and tests in that order, stopping at the first red.
 The test invocation keeps `-count=1 -timeout=120s`. Human output names the subject
