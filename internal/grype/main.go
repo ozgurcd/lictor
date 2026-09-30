@@ -44,6 +44,9 @@ const defaultAllowlist = "grype-allowlist.json"
 // run is main without the process: every path prints exactly one line to
 // out and returns the exit code, so the driver is testable from fixtures.
 func Run(ctx context.Context, opts Options, out, errOut io.Writer) int {
+	if opts.SBOM != "" {
+		return runSBOM(ctx, opts, out, errOut)
+	}
 	scan, inventory, allowPath, root, coverageOnly := &opts.Scan, &opts.Inventory, &opts.Allowlist, &opts.Repository, &opts.CoverageOnly
 	rootExplicit := opts.RepositoryExplicit
 	if opts.AsOf.IsZero() {
@@ -201,19 +204,9 @@ func Run(ctx context.Context, opts Options, out, errOut io.Writer) int {
 		return 2
 	}
 
-	var allow Allowlist
-	allowRaw, readErr := executor.ReadReport(*allowPath)
-	switch {
-	case readErr == nil:
-		allow, err = ParseAllowlist(allowRaw)
-		if err != nil {
-			fmt.Fprintf(out, "CANNOT-EVALUATE: %v\n", err)
-			return 2
-		}
-	case errors.Is(readErr, os.ErrNotExist):
-		// No allowlist is the ordinary state: nothing is excused.
-	default:
-		fmt.Fprintf(out, "CANNOT-EVALUATE: allowlist %s unreadable (%v)\n", *allowPath, readErr)
+	allow, err := readAllowlist(*allowPath)
+	if err != nil {
+		fmt.Fprintf(out, "CANNOT-EVALUATE: %v\n", err)
 		return 2
 	}
 
@@ -275,6 +268,17 @@ func Run(ctx context.Context, opts Options, out, errOut io.Writer) int {
 		return 1
 	}
 	return 0
+}
+
+func readAllowlist(path string) (Allowlist, error) {
+	raw, err := executor.ReadReport(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return Allowlist{}, nil
+	}
+	if err != nil {
+		return Allowlist{}, fmt.Errorf("allowlist %s unreadable (%v)", path, err)
+	}
+	return ParseAllowlist(raw)
 }
 
 // judgeInventory reads the inventory (from the path when given, else the

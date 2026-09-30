@@ -7,6 +7,7 @@ type Options struct {
 	Repository         string
 	RepositoryExplicit bool
 	Scan               string
+	SBOM               string
 	Inventory          string
 	Allowlist          string
 	CoverageOnly       bool

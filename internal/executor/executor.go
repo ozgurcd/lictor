@@ -72,6 +72,14 @@ func Scan(ctx context.Context, root, report, inventory string, stderr io.Writer)
 	return err
 }
 
+// ScanSBOM uses the same bounds and environment as directory scans. The input
+// is a private snapshot: its digest and the scanner's bytes cannot diverge.
+func ScanSBOM(ctx context.Context, root, sbom, report string, stderr io.Writer) error {
+	_, err := run(ctx, root, "grype", 5*time.Minute, stderr,
+		"sbom:"+sbom, "--output", "json="+report)
+	return err
+}
+
 // Ignored asks Git for ignored paths without index refresh writes or fsmonitor.
 func Ignored(ctx context.Context, root string) ([]byte, error) {
 	return run(ctx, root, "git", 30*time.Second, nil,

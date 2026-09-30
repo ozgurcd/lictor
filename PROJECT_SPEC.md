@@ -49,6 +49,24 @@ inventory filenames resolve from the caller's working directory; relative allowl
 paths resolve from the selected repository. The default is `grype-allowlist.json`.
 A missing allowlist means no entries, as in the source judge.
 
+`grype --sbom FILE` explicitly selects an SPDX (JSON or tag-value) or CycloneDX
+(JSON or XML) subject. Relative filenames resolve from the caller's directory.
+The selected repository supplies the existing pin, scanner working directory
+and allowlist; it is not the SBOM subject. The input must be a readable regular
+file of at most 64 MiB. Lictor recognizes the format family and delegates parsing
+to Grype. It scans a private copy of the bytes it hashes, through the same
+five-minute, fixed-argv, bounded-environment executor as directory scans:
+`grype sbom:SNAPSHOT --output json=REPORT`. No shell or inventory scan is added.
+Evidence names `sbom:<basename> sha256:<hex>` and explicitly marks configuration
+comparison and ignored-tree coverage not applicable, including on refusals.
+When input cannot be read within the bound its digest is `unavailable`, never
+invented. Vulnerabilities go through the existing Decide and allowlist parser;
+an allowlisted High still fails. Invalid input and scanner failures exit 2.
+`--sbom` with `-scan` refuses with exit 2: measured Grype 0.119.0 reports do not
+bind the report to the exact SBOM bytes. Source names and package identities
+are insufficient. `-coverage-only` and `-inventory` also refuse for SBOMs.
+The replay measurement and fixture provenance are in [docs/sbom.md](docs/sbom.md).
+
 Exit 0 means pass, 1 means an evaluated failure, and 2 means cannot-evaluate.
 The human stdout evidence line stays byte-identical to the source judge, including
 `grype-gate` and the directory base-name subject. Separate stderr context names the

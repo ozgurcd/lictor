@@ -87,9 +87,10 @@ func run(ctx context.Context, args []string, out, errOut io.Writer, now func() t
 		}
 		value := map[string]any{"schema_version": "lictor.capabilities.v1", "version": version, "commands": []string{"version", "capabilities", "grype", "green", "clockfuse", "route", "witness"}, "machine_interfaces": []string{"lictor.version.v1", "lictor.capabilities.v1", "lictor.grype.v1", "lictor.green.v1", "lictor.clockfuse.v1", "lictor.route.v1", "lictor.witness.v1"}, "exit_codes": map[string]int{"pass": 0, "fail": 1, "cannot_evaluate": 2}, "repository_selection": "--repo absolute path; default current working directory", "replay": "grype -scan JSON -inventory JSON --as-of RFC3339; unchanged repository inputs required", "witness_exits": "run/finalize 0 green, 1 red, 2 cannot-evaluate; lock 3; session 4; step preserves target exit"}
 		if wantJSON {
+			value["replay"] = "grype -scan JSON -inventory JSON --as-of RFC3339; unchanged repository inputs required; --sbom FILE scans SPDX or CycloneDX with SHA-256 evidence; SBOM -scan replay refused without a content binding"
 			return emit(out, value)
 		}
-		fmt.Fprintln(out, "lictor "+version+": version, capabilities, grype, green, clockfuse, route, witness; exits 0 pass, 1 fail, 2 cannot_evaluate; witness lock 3, session 4, step target exit; --repo absolute path (default cwd); grype -scan with --as-of replays Lictor's dated judgement")
+		fmt.Fprintln(out, "lictor "+version+": version, capabilities, grype, green, clockfuse, route, witness; exits 0 pass, 1 fail, 2 cannot_evaluate; witness lock 3, session 4, step target exit; --repo absolute path (default cwd); grype --sbom FILE scans SPDX or CycloneDX with SHA-256 evidence; SBOM -scan replay refused without content binding; grype -scan with --as-of replays Lictor's dated judgement")
 		return 0
 	}
 	if args[0] == "witness" {
@@ -123,7 +124,8 @@ func runGrype(ctx context.Context, args []string, wantJSON bool, out, errOut io.
 	fs.SetOutput(&diagnostic)
 	fs.StringVar(&opts.Repository, "repo", cwd, "absolute repository path; compatibility default is current working directory")
 	unpinned := fs.Bool("unpinned", false, "permit an absent version declaration; never bypass a mismatch")
-	fs.StringVar(&opts.Scan, "scan", "", "saved Grype JSON report; otherwise run grype dir:. in the repository")
+	fs.StringVar(&opts.Scan, "scan", "", "saved Grype JSON report; otherwise scan the repository or --sbom file")
+	fs.StringVar(&opts.SBOM, "sbom", "", "SPDX or CycloneDX SBOM file to scan; SBOM replay with -scan is refused without a content binding")
 	fs.StringVar(&opts.Inventory, "inventory", "", "matching CycloneDX JSON inventory; required for saved directory reports")
 	fs.StringVar(&opts.Allowlist, "allowlist", "grype-allowlist.json", "allowlist path; relative paths resolve under --repo")
 	fs.BoolVar(&opts.CoverageOnly, "coverage-only", false, "judge inventory coverage only; no scanner")

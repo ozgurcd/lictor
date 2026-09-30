@@ -1,0 +1,29 @@
+{
+  "entries": [
+    {
+      "id": "GHSA-35jh-r3h4-6jhm",
+      "reason": "Fixture proving the High severity floor survives a named allowance",
+      "ruling": "SBOM regression proof"
+    },
+    {
+      "id": "GHSA-29mw-wpgm-hmr9",
+      "reason": "Fixture proving the High severity floor survives a named allowance",
+      "ruling": "SBOM regression proof"
+    },
+    {
+      "id": "GHSA-r5fr-rjxr-66jc",
+      "reason": "Fixture proving the High severity floor survives a named allowance",
+      "ruling": "SBOM regression proof"
+    },
+    {
+      "id": "GHSA-xxjr-mmjv-4gpg",
+      "reason": "Fixture proving the High severity floor survives a named allowance",
+      "ruling": "SBOM regression proof"
+    },
+    {
+      "id": "GHSA-f23m-r3pf-42rh",
+      "reason": "Fixture proving the High severity floor survives a named allowance",
+      "ruling": "SBOM regression proof"
+    }
+  ]
+}

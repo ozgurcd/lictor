@@ -445,3 +445,15 @@ Consumer follow-up remains OSS verify's switch, deletion of verify-all.sh,
 removal of verify-check.sh's corresponding branch and replacement of the
 driver-string assertion in verify_all_test.go. External filing is declined
 because the consumers and workspace wiki are read-only in this slice.
+
+## [2026-09-30] implementation | agent-lictor-sbom
+
+Co-versioned SBOM support adds --sbom with exact-byte SHA-256 evidence and
+explicit not-applicable directory predicates, preserving Decide and allowlist
+policy. Real Syft/Grype measurements and the four CLI evidence lines are in
+docs/sbom.md. Replay refuses because reports do not bind exact SBOM bytes.
+GRYPE-SBOM-1 records the observed pre-implementation red; bounds, parser failure,
+missing scanner, fixed-time CLI and existing-subject parity have offline proofs.
+PROJECT_DESC.md remains the owner's untouched and unstaged edit. Release version
+stays v0.4.2 with an Unreleased note; no consumer, tap, tag, push or release work.
+No adjacent item was opened by this slice.

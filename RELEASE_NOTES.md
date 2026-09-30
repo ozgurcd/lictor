@@ -1,3 +1,13 @@
+# Unreleased
+
+Adds `lictor grype --sbom FILE` for SPDX and CycloneDX subjects. Evidence carries
+the basename and exact SHA-256; directory configuration and coverage predicates
+are explicitly not applicable. The bounded scanner and existing vulnerability
+and allowlist verdicts remain authoritative: an allowlisted High still fails.
+Unbound SBOM replay, invalid or oversized input, and scanner failures refuse
+with exit 2. GRYPE-SBOM-1 records the red-first fixture proof. No consumer pin,
+release version or published artifact changes in this entry.
+
 # v0.4.2 — 2026-09-22
 
 Dirty `witness --all` now reproduces verify-all's complete diagnostic record:

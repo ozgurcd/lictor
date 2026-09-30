@@ -28,12 +28,14 @@ import (
 
 // Subject is what a report judged, read from the report's own source block.
 type Subject struct {
-	// Kind is grype's source.type: "directory", "image", or whatever else the
-	// scanner wrote (judged as unknown).
+	// Kind is the explicit "sbom" request, or grype's source.type for the
+	// existing directory/image paths (other reported types are unknown).
 	Kind string
 	// Target is the directory path as given to the scanner, or the image
 	// reference the caller named (source.target.userInput).
 	Target string
+	// SHA256 binds an explicitly requested SBOM to the exact bytes scanned.
+	SHA256 string
 }
 
 // ParseSubject reads the subject from a grype JSON report. A report without a
@@ -94,6 +96,9 @@ func (s Subject) IsImage() bool { return s.Kind == "image" }
 // file exists for). Only the label changes: ResolveDir still compares the
 // absolute values, and an image subject's label is what it was.
 func (s Subject) Label() string {
+	if s.Kind == "sbom" {
+		return "sbom:" + filepath.Base(s.Target) + " sha256:" + s.SHA256
+	}
 	if s.Target == "" {
 		return s.Kind
 	}
