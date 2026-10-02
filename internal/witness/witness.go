@@ -200,7 +200,7 @@ func Run(ctx context.Context, o Options, out, diagnostic io.Writer) Result {
 		var ec int
 		if blocked != "" {
 			ec = 125
-			if dirty && o.All {
+			if o.All {
 				fmt.Fprintf(targetOutput, "==> gate-witness: %s\ncheck FAILED: NOT-RUN %s: %s\n", e.Name, e.Name, blocked)
 			}
 			_, err = fmt.Fprintf(f, "evidence: [%s] check FAILED: NOT-RUN %s: %s\nelapsed: %s 0s\ntarget: %s exit=125\n", e.Name, e.Name, blocked, e.Name, e.Name)

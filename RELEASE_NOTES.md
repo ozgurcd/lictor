@@ -1,3 +1,14 @@
+# v0.4.4 — 2026-10-02
+
+Clean `witness run --all` now prints a blocked dependent's
+`==> gate-witness: <name>` banner and
+`check FAILED: NOT-RUN <name>: <reason>` line, in plan order on the same
+stream as other target banners. Records, exits, dirty streams, default
+fail-fast and stepwise output are unchanged. WITNESS-ALL-NOT-RUN-ECHO-1
+binds the regression and observed guard-restoration mutation proof.
+Frozen-clock source and v0.4.3 comparisons are recorded in docs/lictor-8.md.
+The existing declared divergences remain; no consumer pins are changed.
+
 # v0.4.3 — 2026-09-30
 
 Adds `lictor grype --sbom FILE` for SPDX and CycloneDX subjects. Evidence carries

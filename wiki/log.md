@@ -467,3 +467,24 @@ and existing release workflow; the formula takes the published archive hashes.
 The final report records validation, remote refs and installed-byte verification.
 PROJECT_DESC.md remains the owner's unchanged, unstaged edit. No consumer pins
 or parent-wiki files are changed; consumer migration remains separately scoped.
+
+## [2026-10-02] release | LICTOR-8
+
+Owner ruling 2026-10-02: "on a clean tree, `witness run --all` prints a dependency-blocked target's `==> gate-witness: <name>` banner and `check FAILED: NOT-RUN <name>: <reason>` line on the stream the other banners use, in plan order, as on a dirty tree. Not a declared divergence; the declared ones stay."
+
+The blocked branch's dirty-only console guard becomes all-target-only; record
+writing and execution remain unchanged. WITNESS-ALL-NOT-RUN-ECHO-1 fails on
+v0.4.3, passes with the fix and fails when the old guard is restored. Source
+comparisons cover clean/dirty green/red/blocked plans; fail-fast and stepwise
+comparisons preserve v0.4.3 bytes. Existing assertions are unchanged. All three
+release constants advance together to v0.4.4; docs/lictor-8.md records proof.
+make verify precedes the commit and is repeated at the release head; release,
+formula, checksum and installed-version outcomes belong to the final report.
+
+The first comparison invocation misquoted a shell pattern and ran no comparison
+tests. The owner clarified that invocation errors are corrected once, reported,
+and are not measured-red STOPs. The corrected invocation ran six top-level
+tests and sixteen subtests successfully. PROJECT_DESC.md stays untouched and
+unstaged. No consumer, parent wiki or other sibling changes are made. Consumer
+adoption remains separately scoped; external queue edits are declined because
+those repositories are read-only. No new adjacent item is opened.

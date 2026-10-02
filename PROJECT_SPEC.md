@@ -25,7 +25,7 @@ belong to a later authorized slice.
 ## 3. Command contracts
 
 `version` and `capabilities` are repository-independent. Each accepts `--json`.
-The release is v0.4.3; capabilities names version, capabilities, grype, green,
+The release is v0.4.4; capabilities names version, capabilities, grype, green,
 clockfuse, route and witness. Every repository command checks the first ci.yml line
 matching `^  LICTOR_VERSION: (v[0-9][0-9.]*)`. A matching pin runs; a mismatch
 refuses with exit 2, one stderr line naming the declared version and the public
@@ -256,6 +256,11 @@ half. Default run stops at the first red; --all attempts independent targets as
 verify-all does. Plan and --requires validation completes before locks, record
 writes or target execution. Dependencies name earlier planned entries only;
 blocked dependents record source-shaped NOT-RUN evidence and exit 125.
+Under --all, each blocked dependent also prints its `==> gate-witness: <name>`
+banner and `check FAILED: NOT-RUN <name>: <reason>` line in plan order on the
+same stream as the other target banners, on clean and dirty trees alike.
+WITNESS-ALL-NOT-RUN-ECHO-1 binds this console contract. Records, exits,
+fail-fast and stepwise output are unchanged.
 POSIX quote removal supplies argv without expansion. Unquoted pipe, ampersand,
 semicolon, redirection, dollar, backtick, parentheses and newline refuse by
 target name. Direct shell executables refuse; make retains its own execution.
@@ -351,7 +356,7 @@ the charter's migration order with the measured Grype source count.
 ## 5. Consumer adoption
 
 Switch the consumers in a separately authorized consumer slice after release.
-Until their pins advance, v0.4.3 intentionally refuses older version declarations.
+Until their pins advance, v0.4.4 intentionally refuses older version declarations.
 Declare one LICTOR_VERSION and LICTOR_SHA256 and one derived CI download route;
 assert the installed version. Use public release URLs and published checksums;
 no private-release access or token is required.

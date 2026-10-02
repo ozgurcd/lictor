@@ -2,7 +2,7 @@
 title: Lictor
 status: authoritative
 co_versioned: true
-verified: 2026-09-30
+verified: 2026-10-02
 ---
 
 # Lictor
@@ -37,3 +37,4 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-09-22 | co-versioned | LICTOR-7 implementation: v0.4.2 echoes dirty --all scratch records with source-identical streams; green, red and NOT-RUN proofs preserve the committed record; WITNESS-DIRTY-ECHO-1 raises the armed floor and observed red proofs to seven. |
 | 2026-09-30 | co-versioned | agent-lictor-sbom: explicit SPDX/CycloneDX subject, basename and exact-byte SHA-256 evidence, directory predicates not applicable, unchanged vulnerability policy and fail-closed unbound replay; GRYPE-SBOM-1 and real scanner measurements in docs/sbom.md; Unreleased only. |
 | 2026-09-30 | co-versioned | agent-lictor-patch-release: v0.4.3 version and schema constants, SBOM README usage and dated release notes; owner-authorized main/tag publication and Homebrew formula/install, with final remote and installation evidence in the release report. |
+| 2026-10-02 | co-versioned | LICTOR-8: v0.4.4 prints clean --all blocked-dependent banners and NOT-RUN reasons in plan order; mutation-proved rule and frozen-clock source/baseline comparisons in docs/lictor-8.md; authorized release and installation. |
