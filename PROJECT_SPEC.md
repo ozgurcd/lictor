@@ -141,7 +141,7 @@ The Grype adapter's environment and policy are unchanged.
 staticcheck, govulncheck, tidy-check, rulefloor and wiki-check, serially. Default
 tests are offline fixtures. `make grype-scan REPO=/absolute/path` is an explicit
 live scan outside that default plan. Tool pins are Go from go.mod, staticcheck
-v0.8.1, govulncheck v1.7.0, rulefloor v0.9.1 and Achta v0.5.10.
+v0.8.1, govulncheck v1.7.0, rulefloor v0.9.1 and Achta v0.5.13.
 Make keeps its Go module cache in `.git/lictor-cache/go-mod`, so dependency test
 sources are not part of the repository source census. Other build caches and
 temporary files are under `.cache/`. This development layout requires a normal

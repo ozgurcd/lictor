@@ -507,3 +507,16 @@ Achta, the parent wiki and Homebrew are not modified. Consumer adoption remains
 outside this release. The stale v0.4.3 repository-page lead was corrected as part
 of this release's local documentation; historical rows remain intact. No new
 adjacent item requires an external queue write.
+
+## [2026-10-05] maintenance | ACHTA-0.5.13 + LICTOR PIN
+
+The installed v0.5.12 binary failed the existing v0.5.10 exact version predicate
+with false and exit 1. Achta v0.5.13 is now released and installed with module
+agreement pass. Makefile, verify.yml, README.md and PROJECT_SPEC.md are the
+complete live v0.5.10 pin set; historical notes and route test fixtures stay.
+The CI Linux amd64 checksum is 407c918e74e49961d5938be2d4cf1ba4c3b7552bb574505c195ae59aff2cf6e7
+from v0.5.13 checksums.txt, also verified against the downloaded release archive.
+Full make verify and wiki-check precede this commit. The owner authorizes a
+fast-forward main push and its CI proof, but no Lictor tag or release.
+PROJECT_DESC.md remains byte-identical to the owner edit and is never staged.
+Parent wiki and Identuum files remain read-only. No adjacent queue edit is made.
