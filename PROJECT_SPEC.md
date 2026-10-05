@@ -25,7 +25,7 @@ belong to a later authorized slice.
 ## 3. Command contracts
 
 `version` and `capabilities` are repository-independent. Each accepts `--json`.
-The release is v0.4.4; capabilities names version, capabilities, grype, green,
+The release is v0.4.5; capabilities names version, capabilities, grype, green,
 clockfuse, route and witness. Every repository command checks the first ci.yml line
 matching `^  LICTOR_VERSION: (v[0-9][0-9.]*)`. A matching pin runs; a mismatch
 refuses with exit 2, one stderr line naming the declared version and the public
@@ -310,7 +310,8 @@ lines for the target, including no Go package count. Invalid UTF-8 without NUL
 uses `binary-output: NAME contains invalid UTF-8; evidence omitted`. NUL takes
 precedence if both occur. Neither case refuses: elapsed, target exit,
 truncation if applicable and finalization retain their normal semantics.
-The raw diagnostic stream remains unchanged; only the text record is filtered.
+The raw diagnostic stream remains unchanged unless gate environment names are
+declared, in which case declared-value redaction precedes both streams.
 Label/citation input must be valid UTF-8 without NUL before opening the record.
 Other target names are already ASCII-constrained; Git identities are hashes.
 For valid text only the original EVIDENCE_RE matches, tool lines and Go package
@@ -322,6 +323,42 @@ variables. No ambient GATE_WITNESS_* changes the record: --cites, --tie and
 reads for replay; otherwise a supplied clock is sampled at each source-equivalent
 point. lictor.witness.v1 carries repository, record, reason, exit, whether a record
 was written, and pin metadata. Target output always goes to stderr under JSON.
+
+### Declared gate environment
+
+`witness run --env NAME` is repeatable. Consumers keep the names in their
+committed Makefile invocation, the existing place that already supplies argv
+plans and dependencies. This adds no config discovery, config parser or plan
+grammar. Other witness modes refuse this flag before touching the record.
+The baseline allowlists above are unchanged. Only declared additional names
+are passed to gate processes; an unset name stays absent and a set empty value
+is passed as empty. Values are sampled once after validation, before execution.
+
+Names must match `[A-Za-z_][A-Za-z0-9_]*`. Duplicates, every name starting with
+`GO`, all names in the Go and Grype allowlists, GIT_OPTIONAL_LOCKS and LC_ALL
+refuse with exit 2 and a line naming the declaration. Validation finishes before
+locks, record writes or gate execution. NAME=value is invalid; its value is
+never included in the refusal. No declared values appear in metadata or errors.
+The header adds one `environment: NAME present` or `environment: NAME absent`
+line per declared name, in declaration order. With no declarations, there are
+no additional lines and the original execution and recording path is retained.
+
+Example committed invocation (the environment supplies the value):
+
+```make
+verify-database:
+	lictor witness run --repo "$(CURDIR)" --record GATE-RUN.txt --label database --env IDENTUUM_IDP_TEST_DATABASE_URL -- database="$(MAKE) --no-print-directory database-test"
+```
+
+Before target output is mirrored or spooled, each declared nonempty value is
+replaced with `[redacted]`. The streaming filter withholds possible prefixes
+across writes; overlapping values prefer the longest, and a trailing prefix
+at end of output or the ceiling is also redacted. Matching is exact bytes,
+not arbitrary encodings or separately emitted substrings. Empty values need
+no replacement. Redaction does not alter the target exit, raw-byte ceiling,
+deadline or final verdict. Human, JSON and dirty --all use the same filter.
+The offline CLI fixture intentionally echoes a credential-shaped DSN through
+both streams; removing the filter makes its all-output-bytes assertion fail.
 
 The source's outside-tree exclusion yields EMPTY-TREE. The port preserves that
 record byte contract; such a record is diagnostic, not a usable witness.
@@ -356,7 +393,7 @@ the charter's migration order with the measured Grype source count.
 ## 5. Consumer adoption
 
 Switch the consumers in a separately authorized consumer slice after release.
-Until their pins advance, v0.4.4 intentionally refuses older version declarations.
+Until their pins advance, v0.4.5 intentionally refuses older version declarations.
 Declare one LICTOR_VERSION and LICTOR_SHA256 and one derived CI download route;
 assert the installed version. Use public release URLs and published checksums;
 no private-release access or token is required.

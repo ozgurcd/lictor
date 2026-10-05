@@ -35,9 +35,10 @@ func runWitness(ctx context.Context, args []string, wantJSON bool, out, diag io.
 	fs.StringVar(&o.Label, "label", "", "gate label")
 	fs.StringVar(&o.Cites, "cites", "", "explicit declaration citation")
 	fs.StringVar(&o.Tie, "tie", "digest", "digest or commit, matching source CI tie")
-	var requires, siblings many
+	var requires, siblings, environment many
 	fs.Var(&requires, "requires", "target:earlier-prerequisite; repeatable")
 	fs.Var(&siblings, "sibling", "NAME=absolute-path to include at finalization; repeatable")
+	fs.Var(&environment, "env", "gate environment NAME only; repeatable, run mode only; records presence, never values")
 	fs.BoolVar(&o.All, "all", false, "attempt all independent targets; dirty human runs echo the scratch record and target output to stdout without minting")
 	fs.DurationVar(&o.LockWait, "lock-wait", 120*time.Second, "bounded per-record wait; source default 120s; refusal exit 3")
 	fs.DurationVar(&o.Timeout, "timeout", 30*time.Minute, "per-target execution bound")
@@ -74,6 +75,7 @@ func runWitness(ctx context.Context, args []string, wantJSON bool, out, diag io.
 	o.Entries = fs.Args()
 	o.Requires = requires
 	o.Siblings = siblings
+	o.Environment = environment
 	// Dirty human --all has the source driver's exact stdout/stderr contract.
 	// Other invocations retain repository context, including JSON callers.
 	deferContext := o.Mode == "run" && o.All && !wantJSON

@@ -7,3 +7,4 @@
 - [Decision index](platform/decisions.md)
 - [Implemented specification](../PROJECT_SPEC.md)
 - [Slice measurements](../docs/lictor-0.md)
+- [Declared gate environment proofs](../docs/lictor-9.md)

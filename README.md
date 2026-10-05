@@ -1,6 +1,6 @@
 # Lictor
 
-Identuum-specific gate execution. Current release: v0.4.4.
+Identuum-specific gate execution. Current release: v0.4.5.
 The binding charter is [PROJECT_DESC.md](PROJECT_DESC.md); implemented contracts,
 boundaries and the migration plan are in [PROJECT_SPEC.md](PROJECT_SPEC.md).
 
@@ -36,7 +36,7 @@ Every repository command requires a matching LICTOR_VERSION in the consumer's
 .github/workflows/ci.yml. Absence or mismatch refuses with exit 2 and one stderr
 line, with no stdout. `--unpinned` permits deliberate non-consumer use with no
 declaration; it never bypasses a mismatch. JSON includes declared_version and
-pinned. The released v0.4.4 intentionally refuses consumers pinned to another version.
+pinned. The released v0.4.5 intentionally refuses consumers pinned to another version.
 
 The source judge's stdout evidence line is preserved. Human stderr separately
 names the selected repository and as_of; JSON carries the same evidence as
@@ -90,6 +90,33 @@ arguments; there is no expansion or shell. Unquoted shell metacharacters refuse
 the entire plan before execution. Direct shell executables are refused; put
 shell-dependent work in a make target.
 
+To pass a gate's environment inputs, commit repeatable `--env NAME` flags in
+the consumer's existing Makefile invocation. Declare names only, never values:
+
+```make
+verify-database:
+	lictor witness run --repo "$(CURDIR)" --record GATE-RUN.txt --label database --env IDENTUUM_IDP_TEST_DATABASE_URL -- database="$(MAKE) --no-print-directory database-test"
+```
+
+The caller supplies the value through its environment. Lictor reads each declared
+name once, forwards it only when set (including an empty value), and records
+`environment: IDENTUUM_IDP_TEST_DATABASE_URL present` or `absent`. No other
+ambient variables are added to the existing fixed allowlist. Duplicate names,
+names outside `[A-Za-z_][A-Za-z0-9_]*`, every `GO*` name, and names already
+controlled by Lictor are refused by name before execution or record writes.
+Controlled names include PATH, HOME, CGO_ENABLED, CC, LC_ALL and the Grype cache
+controls; see the full allowlist in PROJECT_SPEC.md. An accidental NAME=value
+is refused without echoing the value. The flag is supported by `witness run`
+only; stepwise modes refuse declarations.
+
+Declared nonempty values in target output become `[redacted]` before console
+output or temporary spooling, including values split across output writes.
+Partial value prefixes at the output ceiling are also hidden. Redaction matches
+declared bytes, not arbitrary transformations or separately printed substrings.
+Empty values have nothing to redact. Target exits, timeouts and output bounds
+remain unchanged. With no declarations, console and record bytes retain the
+previous behavior.
+
 Default `run` stops at the first failure. `--all` preserves verify-all's behavior:
 attempt independent targets, and use repeated `--requires a:b` to record a
 blocked dependent as NOT-RUN with exit 125. Dependencies must name earlier
@@ -118,7 +145,8 @@ the record retains the source's evidence selection for text output. Captured
 NUL output produces `binary-output: NAME contains NUL; evidence omitted`;
 invalid UTF-8 uses `contains invalid UTF-8` instead. Both suppress all tool and
 evidence lines for that target and keep its real exit, elapsed and final verdict.
-The raw diagnostic stream is unchanged. Labels/citations must be valid UTF-8
+The raw diagnostic stream is unchanged except for declared-value redaction.
+Labels/citations must be valid UTF-8
 without NUL before opening a record. This deliberately replaces the source's
 random-path binary-match message with a reproducible text line.
 `--timeout` defaults to 30 minutes per target; other commands retain their caps.

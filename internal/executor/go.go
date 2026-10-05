@@ -32,14 +32,16 @@ func (GoTools) Test(ctx context.Context, root string) ([]byte, error) {
 	return runGo(ctx, root, "go", 5*time.Minute, "test", "./...", "-count=1", "-timeout=120s")
 }
 
+var goEnvironmentNames = []string{
+	"PATH", "HOME", "TMPDIR", "XDG_CACHE_HOME", "GOCACHE", "GOMODCACHE",
+	"GOPATH", "GOROOT", "GOTOOLCHAIN",
+	"GOPROXY", "GOSUMDB", "GOPRIVATE", "GONOPROXY", "GONOSUMDB",
+	"GOOS", "GOARCH", "CGO_ENABLED", "CC", "CXX", "SDKROOT", "MACOSX_DEPLOYMENT_TARGET",
+}
+
 func goEnvironment() []string {
 	var env []string
-	for _, name := range []string{
-		"PATH", "HOME", "TMPDIR", "XDG_CACHE_HOME", "GOCACHE", "GOMODCACHE",
-		"GOPATH", "GOROOT", "GOTOOLCHAIN",
-		"GOPROXY", "GOSUMDB", "GOPRIVATE", "GONOPROXY", "GONOSUMDB",
-		"GOOS", "GOARCH", "CGO_ENABLED", "CC", "CXX", "SDKROOT", "MACOSX_DEPLOYMENT_TARGET",
-	} {
+	for _, name := range goEnvironmentNames {
 		if value, ok := os.LookupEnv(name); ok {
 			env = append(env, name+"="+value)
 		}

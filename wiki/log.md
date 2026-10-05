@@ -488,3 +488,22 @@ tests and sixteen subtests successfully. PROJECT_DESC.md stays untouched and
 unstaged. No consumer, parent wiki or other sibling changes are made. Consumer
 adoption remains separately scoped; external queue edits are declined because
 those repositories are read-only. No new adjacent item is opened.
+
+## [2026-10-05] release | LICTOR-9
+
+Co-versioned v0.4.5 adds repeatable witness run --env NAME, presence-only record
+lines, named refusals for controlled/malformed/duplicate names and redaction
+before target output reaches console or spool. Existing fixed environment names
+are shared with validation. No declaration preserves the previous output path.
+docs/lictor-9.md records the baseline, red-to-green and leak mutation proofs,
+stream-boundary tests, unchanged undeclared fixture bytes and assertion counts.
+PROJECT_SPEC.md and README.md include the committed-invocation example.
+Installed Achta remains v0.5.10; item 0 changes no pins. Every release constant
+advances together. Serial make verify precedes the commit; publication and
+published-archive proof results belong to the final report.
+
+PROJECT_DESC.md remains the owner's unchanged and unstaged edit. Identuum,
+Achta, the parent wiki and Homebrew are not modified. Consumer adoption remains
+outside this release. The stale v0.4.3 repository-page lead was corrected as part
+of this release's local documentation; historical rows remain intact. No new
+adjacent item requires an external queue write.

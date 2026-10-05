@@ -21,6 +21,8 @@ const Ceiling int64 = 64 << 20
 type Options struct {
 	Repo, Record, Label, Mode, Cites, Tie string
 	Entries, Requires, Siblings           []string
+	Environment                           []string
+	environment                           *executor.GateEnvironment
 	All                                   bool
 	LockWait, Timeout                     time.Duration
 	Now                                   func() time.Time
@@ -85,6 +87,15 @@ func Run(ctx context.Context, o Options, out, diagnostic io.Writer) Result {
 		n, p, ok := strings.Cut(s, "=")
 		if !ok || !namePattern.MatchString(n) || !filepath.IsAbs(p) {
 			return fail(2, fmt.Errorf("sibling must be NAME=ABS: %s", s))
+		}
+	}
+	if len(o.Environment) > 0 {
+		if o.Mode != "run" {
+			return fail(2, fmt.Errorf("environment declarations require witness run"))
+		}
+		o.environment, err = executor.DeclareEnvironment(o.Environment)
+		if err != nil {
+			return fail(2, err)
 		}
 	}
 	path := o.Record
@@ -284,6 +295,9 @@ func header(ctx context.Context, o Options, entries []Entry, w io.Writer) error 
 		fmt.Fprintf(&b, " %s", e.Name)
 	}
 	b.WriteByte('\n')
+	if o.environment != nil {
+		o.environment.WritePresence(&b)
+	}
 	_, err = io.WriteString(w, b.String())
 	return err
 }
@@ -300,7 +314,7 @@ func one(ctx context.Context, o Options, e Entry, w, diag io.Writer) (int, error
 	defer f.Close()
 	fmt.Fprintf(diag, "==> gate-witness: %s\n", e.Name)
 	start := o.Now().Unix()
-	ec, total, err := executor.RecordOutput(ctx, o.Repo, e.Argv, o.Timeout, Ceiling, f, diag)
+	ec, total, err := executor.RecordOutput(ctx, o.Repo, e.Argv, o.Timeout, Ceiling, f, diag, o.environment)
 	elapsed := o.Now().Unix() - start
 	if err != nil {
 		return 2, fmt.Errorf("target %s: %w", e.Name, err)

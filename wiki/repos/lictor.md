@@ -2,14 +2,14 @@
 title: Lictor
 status: authoritative
 co_versioned: true
-verified: 2026-10-02
+verified: 2026-10-05
 ---
 
 # Lictor
 
-Module: github.com/ozgurcd/lictor. Release v0.4.3 adds explicit SPDX/CycloneDX
-SBOM subjects with exact-byte digest evidence and fail-closed replay; the
-vulnerability and allowlist policy is unchanged.
+Module: github.com/ozgurcd/lictor. Release v0.4.5 adds consumer-declared gate
+environment names to witness run, name/presence evidence, named refusals and
+streaming value redaction. Runs without declarations retain their record bytes.
 Lictor executes Identuum gates; generic tools retain their judgements. The first
 command is grype, ported from OSS 1cbe9f6c1df8dee83f8ba93e66217cf170b454a7.
 CLI, policy and fixed tool execution occupy separate packages. make verify is
@@ -38,3 +38,4 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-09-30 | co-versioned | agent-lictor-sbom: explicit SPDX/CycloneDX subject, basename and exact-byte SHA-256 evidence, directory predicates not applicable, unchanged vulnerability policy and fail-closed unbound replay; GRYPE-SBOM-1 and real scanner measurements in docs/sbom.md; Unreleased only. |
 | 2026-09-30 | co-versioned | agent-lictor-patch-release: v0.4.3 version and schema constants, SBOM README usage and dated release notes; owner-authorized main/tag publication and Homebrew formula/install, with final remote and installation evidence in the release report. |
 | 2026-10-02 | co-versioned | LICTOR-8: v0.4.4 prints clean --all blocked-dependent banners and NOT-RUN reasons in plan order; mutation-proved rule and frozen-clock source/baseline comparisons in docs/lictor-8.md; authorized release and installation. |
+| 2026-10-05 | co-versioned | LICTOR-9: v0.4.5 adds repeatable witness run environment-name declarations, presence-only records, controlled-name refusals and pre-output redaction; offline and mutation proofs plus undeclared v0.4.4 byte comparisons in docs/lictor-9.md; authorized release verification reported separately. |

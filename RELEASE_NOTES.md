@@ -1,3 +1,12 @@
+## v0.4.5
+
+Consumers can now name the environment variables their gates need with repeated
+`witness run --env NAME` flags in a committed Makefile. Lictor passes set values
+and records only each name and whether it is present or absent. It hides declared
+values from gate output before writing the console or record. Invalid names,
+duplicates and names already controlled by Lictor are refused before gates run.
+Runs with no declarations keep their previous output, records and results.
+
 # v0.4.4 — 2026-10-02
 
 Clean `witness run --all` now prints a blocked dependent's
