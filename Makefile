@@ -18,7 +18,7 @@ toolchain-check: directories $(GOVULNCHECK)
 	staticcheck -version | grep -F '(0.8.1)'
 	$(GOVULNCHECK) -version | grep -F 'govulncheck@v1.7.0'
 	rulefloor version --json | jq -e '.version == "v0.9.1" and .version_agreement == "pass"'
-	achta version --json | jq -e '.version == "v0.5.13" and .version_agreement == "pass"'
+	achta version --json | jq -e '.version == "v0.5.14" and .version_agreement == "pass"'
 
 format-check:
 	@test -z "$$(gofmt -l cmd internal)" || { gofmt -l cmd internal; exit 1; }

@@ -520,3 +520,33 @@ Full make verify and wiki-check precede this commit. The owner authorizes a
 fast-forward main push and its CI proof, but no Lictor tag or release.
 PROJECT_DESC.md remains byte-identical to the owner edit and is never staged.
 Parent wiki and Identuum files remain read-only. No adjacent queue edit is made.
+
+## [2026-10-06] maintenance | ACHTA-CLAIM
+
+Baseline `542379c` equaled origin/main and only PROJECT_DESC.md carried the
+owner's edit. Achta v0.5.14 is published at `9eee610` through Release run
+37477401100 (success, attempt 1) and installed with module agreement pass.
+Its installed bytes match the anonymously downloaded, checksum-verified Darwin
+arm64 archive. Installed-binary claim lifecycle and input-refusal tests pass
+using temporary Git fixtures only; this repository takes no claim.
+
+The old local v0.5.13 predicate returned `false`, exit 1, against the installed
+v0.5.14 binary. Makefile:21, verify.yml:16-17, README.md:169 and
+PROJECT_SPEC.md:144 are the complete live pin set measured from tracked
+documentation and configuration. They now use v0.5.14; CI's Linux amd64 hash is
+0ac186ff8f7cdae4ecae01bdcef3987d11b4fd73938a5aecb053d88f298bfac2
+from the public checksums.txt. Historical version mentions stay unchanged.
+The new exact predicate returns `true`; full serial make verify, including the
+owned wiki check, precedes the pin commit and authorized fast-forward main push.
+
+The first tracked-file census was blocked by gograph-first even with Go files
+excluded: `gograph-first: BLOCKED — a text search over Go source without its
+reason (v0.5.13).` The hook named a reason comment as the compliant form for a
+literal search. One retry with that comment passed and found the four live
+version sites and historical wiki mentions. No search or assertion was weakened.
+
+PROJECT_DESC.md remains untouched and unstaged, with SHA-256
+86bbb4ecde57b6b3693d5b868407a5f264dd247cb1cd3d395574fdfc105a814f.
+No Lictor code, tests, release version, tag or consumer behavior changes.
+The parent wiki and other repositories remain read-only; no adjacent queue
+item is introduced. No brief baseline error was found.

@@ -2,7 +2,7 @@
 title: Lictor
 status: authoritative
 co_versioned: true
-verified: 2026-10-05
+verified: 2026-10-06
 ---
 
 # Lictor
@@ -40,3 +40,4 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-10-02 | co-versioned | LICTOR-8: v0.4.4 prints clean --all blocked-dependent banners and NOT-RUN reasons in plan order; mutation-proved rule and frozen-clock source/baseline comparisons in docs/lictor-8.md; authorized release and installation. |
 | 2026-10-05 | co-versioned | LICTOR-9: v0.4.5 adds repeatable witness run environment-name declarations, presence-only records, controlled-name refusals and pre-output redaction; offline and mutation proofs plus undeclared v0.4.4 byte comparisons in docs/lictor-9.md; authorized release verification reported separately. |
 | 2026-10-05 | co-versioned | ACHTA-0.5.13 + LICTOR PIN: align the local Achta predicate, CI version and published Linux amd64 checksum, and live validation documentation with v0.5.13; no Lictor release. |
+| 2026-10-06 | co-versioned | ACHTA-CLAIM: pin local and CI validation to installed Achta v0.5.14, with its published Linux amd64 checksum and current validation docs; no Lictor tag or claim adoption. |
