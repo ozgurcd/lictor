@@ -166,7 +166,11 @@ make verify
 make wiki-check
 ```
 
-Go 1.27.1, staticcheck v0.8.1, rulefloor v0.9.1, Achta v0.5.15 and jq must be on PATH.
+Go 1.27.1, staticcheck v0.8.1 and jq must be on PATH, with
+achta v0.5.15 or later within v0.5 and rulefloor v0.9.1 or later within v0.9.
+Both tools must report `version_agreement == pass`; prereleases are refused.
+CI pins exact versions and archive checksums. A new minor line or a required
+feature needs a deliberate pin change. The compatibility selftest runs in `make verify`.
 Make installs pinned govulncheck v1.7.0 under .cache/tools. Dependency download and
 vulnerability-DB access belong to developer validation; unit tests are offline.
 The runtime has no third-party dependencies. JSON Schema validation is test-only.

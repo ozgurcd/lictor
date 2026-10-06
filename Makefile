@@ -17,8 +17,12 @@ toolchain-check: directories $(GOVULNCHECK)
 	@test "$$(go env GOVERSION)" = "go$$(awk '$$1 == "go" {print $$2}' go.mod)"
 	staticcheck -version | grep -F '(0.8.1)'
 	$(GOVULNCHECK) -version | grep -F 'govulncheck@v1.7.0'
-	rulefloor version --json | jq -e '.version == "v0.9.1" and .version_agreement == "pass"'
-	achta version --json | jq -e '.version == "v0.5.15" and .version_agreement == "pass"'
+	sh scripts/tool-version-check.sh rulefloor v0.9.1 v0.10.0
+	sh scripts/tool-version-check.sh achta v0.5.15 v0.6.0
+
+.PHONY: tool-version-selftest
+tool-version-selftest:
+	sh scripts/tool-version-selftest.sh
 
 format-check:
 	@test -z "$$(gofmt -l cmd internal)" || { gofmt -l cmd internal; exit 1; }
@@ -70,6 +74,7 @@ wiki-check:
 	achta --wiki-dir "$(CURDIR)/wiki" wiki check --json
 
 verify:
+	$(MAKE) tool-version-selftest
 	$(MAKE) toolchain-check
 	$(MAKE) format-check
 	$(MAKE) build

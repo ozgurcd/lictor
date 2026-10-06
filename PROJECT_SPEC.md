@@ -137,11 +137,15 @@ and module downloads; Lictor neither reads credentials nor confines consumer
 tests. Offline fixture tests set proxy/sumdb off and use the local toolchain.
 The Grype adapter's environment and policy are unchanged.
 
-`make verify` runs toolchain-check, format-check, build, test, race, vet,
+`make verify` runs tool-version-selftest, toolchain-check, format-check, build, test, race, vet,
 staticcheck, govulncheck, tidy-check, rulefloor and wiki-check, serially. Default
 tests are offline fixtures. `make grype-scan REPO=/absolute/path` is an explicit
 live scan outside that default plan. Tool pins are Go from go.mod, staticcheck
-v0.8.1, govulncheck v1.7.0, rulefloor v0.9.1 and Achta v0.5.15.
+v0.8.1 and govulncheck v1.7.0. Local validation accepts
+achta v0.5.15 or later within v0.5 and rulefloor v0.9.1 or later within v0.9,
+each with `version_agreement == pass` and no prerelease suffix.
+CI retains exact version and checksum pins. A new minor line or required feature
+needs a deliberate pin change; consumer `route` version comparisons remain exact.
 Make keeps its Go module cache in `.git/lictor-cache/go-mod`, so dependency test
 sources are not part of the repository source census. Other build caches and
 temporary files are under `.cache/`. This development layout requires a normal

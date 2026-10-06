@@ -580,3 +580,21 @@ carries the complete denial text. No assertion was weakened to pass it.
 PROJECT_DESC.md remains untouched and unstaged at SHA-256
 86bbb4ecde57b6b3693d5b868407a5f264dd247cb1cd3d395574fdfc105a814f.
 All other repositories remain read-only; no adjacent queue item is introduced.
+
+## [2026-10-06] maintenance | LICTOR-10
+
+Owner ruling 2026-10-06, quoted: "k. lictor's LOCAL tool check accepts an installed achta >= v0.5.15 and < v0.6.0, and rulefloor >= v0.9.1 and < v0.10.0, each with version_agreement == pass. CI keeps its exact version and checksum. A new minor line, or a feature lictor needs, is a deliberate pin change."
+
+Baseline `949af8f` equals origin/main; PROJECT_DESC.md is the owner's sole edit,
+SHA-256 86bbb4ecde57b6b3693d5b868407a5f264dd247cb1cd3d395574fdfc105a814f.
+The shell checker uses existing jq to validate one JSON object, stable version
+syntax, numeric version components, agreement and inclusive/exclusive bounds.
+The 20-case stub selftest ran before the checker existed: "SELFTEST: 20 cases,
+20 failures"; after implementation: "SELFTEST: 20 cases, 0 failures".
+It covers accepted patches, both range edges, malformed/missing JSON fields,
+suffixes, disagreement, multiple documents and a failed version command.
+Make verify runs it before the installed-tool checks. Installed Achta v0.5.15
+and Rulefloor v0.9.1 report agreement pass. Full verify and owned wiki-check
+precede the commit; pushed CI is reported separately. No Go source changes,
+CI pin edits, consumer route changes, release or sibling writes. The claim is
+LICTOR-10; PROJECT_DESC.md remains untouched and unstaged. No adjacent item.
