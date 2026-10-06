@@ -550,3 +550,33 @@ PROJECT_DESC.md remains untouched and unstaged, with SHA-256
 No Lictor code, tests, release version, tag or consumer behavior changes.
 The parent wiki and other repositories remain read-only; no adjacent queue
 item is introduced. No brief baseline error was found.
+
+## [2026-10-06] maintenance | ACHTA-0.5.15
+
+Baseline `7fddaf1` matched origin/main with only the owner edit in
+PROJECT_DESC.md. Achta `cd1bfef` released v0.5.15 through successful Release
+run 37481776176, attempt 1. The public cask has four header-free release URLs,
+each paired with its published checksum. The installed Darwin arm64 bytes
+equal the anonymously downloaded SHA-256-verified archive; version reports
+v0.5.15 with module agreement pass. The installed hook passes all 43 read
+cases and 69 preserved-write controls from its regression fixture.
+
+The old v0.5.14 exact local predicate returned `false`, exit 1, against that
+binary. The complete tracked non-Go Achta-reference census identifies live
+version sites at Makefile:21, verify.yml:16, README.md:169, and
+PROJECT_SPEC.md:144, plus verify.yml:17 for the Linux amd64 archive hash.
+Historical documents and logs stay unchanged. The new hash is
+e566d48e8f0781fc7335d5222b622a76c839d397bfddee6151b21584715b5a0a
+from v0.5.15 checksums.txt. Serial make verify precedes this pin commit and
+the authorized fast-forward main push; no Lictor tag is created.
+
+The initial non-Go reference search was refused by gograph-first:
+`gograph-first: BLOCKED — a USAGE question over Go source (achta).`
+Its denial explicitly permitted a read-only program with a reason comment;
+one such retry enumerated tracked non-Go files and succeeded. It excluded
+PROJECT_DESC.md, secret-file paths, symlinks, and Go sources. The final report
+carries the complete denial text. No assertion was weakened to pass it.
+
+PROJECT_DESC.md remains untouched and unstaged at SHA-256
+86bbb4ecde57b6b3693d5b868407a5f264dd247cb1cd3d395574fdfc105a814f.
+All other repositories remain read-only; no adjacent queue item is introduced.
