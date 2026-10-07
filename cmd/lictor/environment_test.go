@@ -120,7 +120,7 @@ func TestDeclaredEnvironment(t *testing.T) {
 			if code != 0 || !bytes.Contains(record, []byte("check OK: declared environment reached gate")) {
 				t.Fatalf("declared environment did not reach gate: exit=%d", code)
 			}
-			for _, line := range []string{"environment: LICTOR_TEST_DATABASE_URL present\n", "environment: LICTOR_TEST_ABSENT absent\n", "environment: LICTOR_TEST_EMPTY present\n"} {
+			for _, line := range []string{"environment: LICTOR_TEST_DATABASE_URL present\n", "environment: LICTOR_TEST_ABSENT absent\n", "environment: LICTOR_TEST_EMPTY present (short value, not redacted)\n"} {
 				if bytes.Count(record, []byte(line)) != 1 {
 					t.Fatal("name/presence record missing or duplicated")
 				}

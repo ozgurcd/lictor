@@ -17,6 +17,7 @@ var environmentName = regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*$`)
 type GateEnvironment struct {
 	names, entries, values []string
 	present                map[string]bool
+	short                  map[string]bool
 }
 
 // DeclareEnvironment refuses collisions before reading any declared value.
@@ -40,13 +41,14 @@ func DeclareEnvironment(names []string) (*GateEnvironment, error) {
 		}
 		seen[name] = true
 	}
-	g := &GateEnvironment{names: append([]string(nil), names...), present: make(map[string]bool)}
+	g := &GateEnvironment{names: append([]string(nil), names...), present: make(map[string]bool), short: make(map[string]bool)}
 	for _, name := range names {
 		value, present := os.LookupEnv(name)
 		g.present[name] = present
 		if present {
 			g.entries = append(g.entries, name+"="+value)
-			if value != "" {
+			g.short[name] = len(value) < 8
+			if !g.short[name] {
 				g.values = append(g.values, value)
 			}
 		}
@@ -61,6 +63,9 @@ func (g *GateEnvironment) WritePresence(w io.Writer) {
 		state := "absent"
 		if g.present[name] {
 			state = "present"
+			if g.short[name] {
+				state += " (short value, not redacted)"
+			}
 		}
 		fmt.Fprintf(w, "environment: %s %s\n", name, state)
 	}

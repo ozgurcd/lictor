@@ -598,3 +598,38 @@ and Rulefloor v0.9.1 report agreement pass. Full verify and owned wiki-check
 precede the commit; pushed CI is reported separately. No Go source changes,
 CI pin edits, consumer route changes, release or sibling writes. The claim is
 LICTOR-10; PROJECT_DESC.md remains untouched and unstaged. No adjacent item.
+
+## [2026-10-07] release | LICTOR-11
+
+Owner rulings 2026-10-07, quoted:
+> r. A declared value shorter than 8 bytes is not redacted. Its record line says `environment: NAME present (short value, not redacted)`. Values of 8 bytes or more stay redacted exactly as today, including the split-write and ceiling cases. No new flag; consumers do not change.
+> s. The release workflow updates Formula/lictor.rb (version, the four URLs, sha256 from checksums.txt; test line) and pushes it, as achta's release does (achta .github/workflows/release.yml, secret HOMEBREW_TAP_GITHUB_TOKEN). It checks the secret by NAME only, fails closed naming it when absent, and reads the pushed formula back.
+
+Baseline `35d6f6c` equals origin/main. The new TestEnvironmentRedactionLength
+ran six subcases: one, seven and empty failed on baseline behavior; eight,
+eight-ceiling and eight-bytes passed. After the threshold fix all six pass,
+including every two-write split. Existing overlap coverage now uses eight- and
+ten-byte values so its redaction assertion retains its purpose. The initial
+Make invocation consumed a dollar anchor and ran zero tests; it is not proof.
+The corrected invocation produced the quoted red: "wrong presence annotation"
+and "incorrect output at split 0". Green: "PASS: TestEnvironmentRedactionLength".
+
+The release-step assertion was red: "release has no Homebrew tap credential
+check". The exact inline renderer reproduced the v0.4.5 formula byte-for-byte
+from published checksums, then passed a next-version fixture with renamed
+archive names (fixture hashes are not v0.4.6 release evidence). Ruby: "Syntax OK".
+PyYAML was unavailable; the dry run extracts the inline Python with stdlib.
+One early dry run preceded checksum download completion; the completed run passed.
+The release census found only the CLI and two schema constants; all move together.
+Gograph session lictor11_20261007_140940 planned and reviewed the Go changes.
+Full verify and wiki-check precede any commit; remote release evidence is reported
+separately. Secret-name discovery returned no repository secrets; the owner
+must add HOMEBREW_TAP_GITHUB_TOKEN to ozgurcd/lictor for automatic tap publication.
+This is recorded here rather than writing the forbidden parent queue. Consumer
+pin moves remain the queued owner task; no consumer is edited. PROJECT_DESC.md
+remains unstaged and byte-identical to its owner edit (SHA-256
+86bbb4ecde57b6b3693d5b868407a5f264dd247cb1cd3d395574fdfc105a814f).
+The first full verify found the CLI's old empty-value presence expectation in
+human, JSON and dirty-all modes. It now requires the exact short-value annotation;
+no other CLI assertion changes. Follow-up session lictor11_cli_20261007_141348
+planned and reviewed this correction before the full verify retry.

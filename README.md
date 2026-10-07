@@ -109,13 +109,19 @@ controls; see the full allowlist in PROJECT_SPEC.md. An accidental NAME=value
 is refused without echoing the value. The flag is supported by `witness run`
 only; stepwise modes refuse declarations.
 
-Declared nonempty values in target output become `[redacted]` before console
+Declared values of 8 bytes or more in target output become `[redacted]` before console
 output or temporary spooling, including values split across output writes.
 Partial value prefixes at the output ceiling are also hidden. Redaction matches
 declared bytes, not arbitrary transformations or separately printed substrings.
-Empty values have nothing to redact. Target exits, timeouts and output bounds
+Shorter values pass through; their record line says
+`environment: NAME present (short value, not redacted)`, including empty values.
+Target exits, timeouts and output bounds
 remain unchanged. With no declarations, console and record bytes retain the
 previous behavior.
+
+The tag-triggered release updates and reads back Homebrew's `Formula/lictor.rb`
+using the four published archive checksums. Its tap step fails closed naming
+`HOMEBREW_TAP_GITHUB_TOKEN` if that required secret is absent.
 
 Default `run` stops at the first failure. `--all` preserves verify-all's behavior:
 attempt independent targets, and use repeated `--requires a:b` to record a

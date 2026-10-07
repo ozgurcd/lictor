@@ -65,3 +65,53 @@ jobs:
           set -euo pipefail
           gh release create "${RELEASE_TAG}" dist/* --verify-tag \
             --title "Lictor ${RELEASE_TAG}" --notes-file RELEASE_NOTES.md
+      - name: Publish and verify Homebrew formula
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo 'missing required secret: HOMEBREW_TAP_GITHUB_TOKEN' >&2
+            exit 1
+          fi
+          test "$(gh api repos/ozgurcd/homebrew-tap --jq '.permissions.push')" = true
+          tap_dir="$RUNNER_TEMP/homebrew-tap"
+          gh auth setup-git
+          gh repo clone ozgurcd/homebrew-tap "$tap_dir"
+          python3 - "$tap_dir/Formula/lictor.rb" dist/checksums.txt "$RELEASE_TAG" <<'PY'
+          import pathlib, re, sys
+          formula, checksums = map(pathlib.Path, sys.argv[1:3])
+          tag = sys.argv[3]
+          assert re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', tag), 'invalid release tag'
+          version = tag[1:]
+          text = formula.read_text()
+          old = re.search(r'^  version "([0-9.]+)"$', text, re.M)
+          assert old and tuple(map(int, old[1].split('.'))) <= tuple(map(int, version.split('.'))), 'refusing unknown version or downgrade'
+          hashes = {}
+          for line in checksums.read_text().splitlines():
+              digest, name = line.split()
+              assert re.fullmatch(r'[0-9a-f]{64}', digest) and name not in hashes, 'invalid or duplicate checksum'
+              hashes[name] = digest
+          text = text.replace('version "'+old[1]+'"', 'version "'+version+'"')
+          text, count = re.subn(r'\"version\":\"v[0-9.]+\"', '"version":"'+tag+'"', text)
+          assert count == 1, 'missing formula version test'
+          for target in ('darwin_arm64', 'darwin_amd64', 'linux_arm64', 'linux_amd64'):
+              name = 'lictor_'+version+'_'+target+'.tar.gz'
+              url = 'https://github.com/ozgurcd/lictor/releases/download/'+tag+'/'+name
+              pattern = r'url "https://github.com/ozgurcd/lictor/releases/download/[^"\n]+/lictor_[^"\n]+_'+target+r'\.tar\.gz"\n(\s+)sha256 "[0-9a-f]{64}"'
+              text, count = re.subn(pattern, lambda m: 'url "'+url+'"\n'+m[1]+'sha256 "'+hashes[name]+'"', text)
+              assert count == 1, 'missing or duplicate formula target: '+target
+          formula.write_text(text)
+          PY
+          ruby -c "$tap_dir/Formula/lictor.rb"
+          git -C "$tap_dir" add Formula/lictor.rb
+          if ! git -C "$tap_dir" diff --cached --quiet; then
+            git -C "$tap_dir" config user.name github-actions
+            git -C "$tap_dir" config user.email github-actions@github.com
+            git -C "$tap_dir" commit -m "chore: update lictor formula to ${RELEASE_TAG#v}"
+            git -C "$tap_dir" push origin HEAD:main
+          fi
+          gh api -H 'Accept: application/vnd.github.raw+json' \
+            repos/ozgurcd/homebrew-tap/contents/Formula/lictor.rb?ref=main > "$RUNNER_TEMP/lictor.rb"
+          cmp "$tap_dir/Formula/lictor.rb" "$RUNNER_TEMP/lictor.rb"

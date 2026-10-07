@@ -7,7 +7,7 @@
       "const": "lictor.capabilities.v1"
     },
     "version": {
-      "const": "v0.4.5"
+      "const": "v0.4.6"
     },
     "commands": {
       "const": [

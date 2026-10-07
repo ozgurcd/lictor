@@ -56,15 +56,15 @@ func TestEnvironmentStreamSecrecy(t *testing.T) {
 	}
 	// Sorted overlapping values must not expose the longer value's suffix.
 	out.Reset()
-	t.Setenv("LICTOR_TEST_LONG", "abcde")
-	t.Setenv("LICTOR_TEST_SHORT", "abc")
+	t.Setenv("LICTOR_TEST_LONG", "abcdefghij")
+	t.Setenv("LICTOR_TEST_SHORT", "abcdefgh")
 	g, err := DeclareEnvironment([]string{"LICTOR_TEST_SHORT", "LICTOR_TEST_LONG"})
 	if err != nil {
 		t.Fatal("declaration failed")
 	}
 	w = g.writer(&out)
-	_, _ = w.Write([]byte("abc"))
-	_, _ = w.Write([]byte("de!"))
+	_, _ = w.Write([]byte("abcdefgh"))
+	_, _ = w.Write([]byte("ij!"))
 	if w.flush() != nil || out.String() != "[redacted]!" {
 		t.Fatal("overlapping value escaped")
 	}

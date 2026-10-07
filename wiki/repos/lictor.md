@@ -2,7 +2,7 @@
 title: Lictor
 status: authoritative
 co_versioned: true
-verified: 2026-10-06
+verified: 2026-10-07
 ---
 
 # Lictor
@@ -43,3 +43,4 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-10-06 | co-versioned | ACHTA-CLAIM: pin local and CI validation to installed Achta v0.5.14, with its published Linux amd64 checksum and current validation docs; no Lictor tag or claim adoption. |
 | 2026-10-06 | co-versioned | ACHTA-0.5.15: advance the local predicate, CI version and published Linux amd64 checksum, and live validation docs to Achta v0.5.15; no Lictor release or code change. |
 | 2026-10-06 | co-versioned | LICTOR-10: accept compatible stable local Achta and Rulefloor patch versions with agreement pass; strict JSON/range selftests join verify; exact CI pins and consumer route comparisons stay unchanged. |
+| 2026-10-07 | co-versioned | LICTOR-11: v0.4.6 leaves declared values shorter than eight bytes unchanged with explicit presence evidence; preserves long-value streaming redaction and adds checked Homebrew formula publication to the release workflow. |

@@ -1,3 +1,12 @@
+# v0.4.6 — 2026-10-07
+
+Declared environment values shorter than 8 bytes now pass through gate output,
+so flags such as "1" no longer corrupt timings or package counts. Their record
+lines explicitly say "short value, not redacted". Values of 8 bytes or more
+retain streaming redaction, including split writes and output ceilings.
+The release workflow now updates and verifies the Homebrew formula using the
+published archive checksums; a missing tap credential fails the tap step.
+
 ## v0.4.5
 
 Consumers can now name the environment variables their gates need with repeated

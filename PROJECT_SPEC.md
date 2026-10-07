@@ -354,7 +354,9 @@ verify-database:
 	lictor witness run --repo "$(CURDIR)" --record GATE-RUN.txt --label database --env IDENTUUM_IDP_TEST_DATABASE_URL -- database="$(MAKE) --no-print-directory database-test"
 ```
 
-Before target output is mirrored or spooled, each declared nonempty value is
+Present values shorter than 8 bytes use the header line
+`environment: NAME present (short value, not redacted)` and pass through output.
+Before target output is mirrored or spooled, each declared value of 8 bytes or more is
 replaced with `[redacted]`. The streaming filter withholds possible prefixes
 across writes; overlapping values prefer the longest, and a trailing prefix
 at end of output or the ceiling is also redacted. Matching is exact bytes,
@@ -363,6 +365,11 @@ no replacement. Redaction does not alter the target exit, raw-byte ceiling,
 deadline or final verdict. Human, JSON and dirty --all use the same filter.
 The offline CLI fixture intentionally echoes a credential-shaped DSN through
 both streams; removing the filter makes its all-output-bytes assertion fail.
+
+The release workflow updates Homebrew's `Formula/lictor.rb`: version, four
+archive URLs, SHA-256 values from `checksums.txt`, and the version test. It
+pushes and reads back the formula. The tap step fails closed naming
+`HOMEBREW_TAP_GITHUB_TOKEN` when absent, without printing its value.
 
 The source's outside-tree exclusion yields EMPTY-TREE. The port preserves that
 record byte contract; such a record is diagnostic, not a usable witness.
