@@ -633,3 +633,16 @@ The first full verify found the CLI's old empty-value presence expectation in
 human, JSON and dirty-all modes. It now requires the exact short-value annotation;
 no other CLI assertion changes. Follow-up session lictor11_cli_20261007_141348
 planned and reviewed this correction before the full verify retry.
+
+## [2026-10-09] security | ACHTA-GATE-RUN Go patch prerequisite
+
+The host Go 1.27.2 first failed the repository's exact Go 1.27.1 check.
+Selecting GOTOOLCHAIN=go1.27.1 passed that check, tests, race, vet and staticcheck,
+but govulncheck failed on GO-2026-6604 in the standard library, fixed in 1.27.2.
+Under owner ruling ff / P-100, move the Go patch and live prerequisite docs to
+1.27.2 in a separate commit. Both CI workflows already read go.mod. No gate is
+weakened; illustrative old-version evidence in the specification stays unchanged.
+The owner's PROJECT_DESC.md remains unstaged and byte-identical, SHA-256
+86bbb4ecde57b6b3693d5b868407a5f264dd247cb1cd3d395574fdfc105a814f.
+Full make verify precedes this commit. The Achta CI pin is a separate change;
+both commits travel in one authorized main push, with the CI result in the report.

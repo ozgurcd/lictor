@@ -96,7 +96,7 @@ XDG_CACHE_HOME, GRYPE_DB_CACHE_DIR, GRYPE_DB_AUTO_UPDATE and
 GRYPE_CHECK_FOR_APP_UPDATE; it adds GIT_OPTIONAL_LOCKS=0 and LC_ALL=C. No scanner
 policy override or credential variable is inherited by this adapter.
 
-Go 1.27.1 is the creation floor. Runtime implementation uses the standard library.
+Go 1.27.2 is the creation floor. Runtime implementation uses the standard library.
 The sole direct test dependency, jsonschema/v6, validates published JSON Schema;
 the standard library parses JSON but does not validate JSON Schema. No database,
 ORM, UUID allocator, HTTP client or generic command runner is introduced.
