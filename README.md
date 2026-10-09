@@ -194,7 +194,8 @@ remain separate work after all affected pins and checksums move together.
 ## Shared CI toolchain bumps
 
 After checkout, use `ozgurcd/lictor/.github/actions/go-toolchain@<full-commit-SHA>`.
-Its only input, `go-version-file`, defaults to the caller's `go.mod`.
+The `go-version-file` input defaults to the caller's `go.mod`.
+The `cache` input defaults to `"true"`; set `cache: "false"` when the caller owns Go caching.
 For a Go bump, change the `go` directive in each repository's `go.mod`.
 For a Staticcheck bump, change the source, patch checksums and version assertion
 once in `.github/actions/go-toolchain/action.yml`, verify Lictor CI, then update
@@ -202,3 +203,5 @@ the action SHA in each consumer. The binary cache includes the action's complete
 recipe, Go version, runner OS and architecture; both versions are checked on hits
 and misses. Other tools remain pinned by each consumer. Local Makefile tool
 version checks must agree with the selected Staticcheck version.
+Consumers move to a new action SHA only when they need its changes or at the
+next Staticcheck bump.

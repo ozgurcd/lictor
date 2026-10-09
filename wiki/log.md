@@ -701,3 +701,14 @@ After Achta release run 37962790929 passed, move the exact CI pin to v0.5.18
 with its published Linux amd64 checksum. The version assertion failed before
 the update and passed afterward; the downloaded archive matches checksums.txt.
 Local compatibility bounds, route semantics and PROJECT_DESC.md stay unchanged.
+
+## [2026-10-09] maintenance | LICTOR-ACTION-CACHE
+
+The shared Go toolchain action accepts `cache`, defaulting to `"true"`, and
+passes it to setup-go. A caller that owns Go caching can set `cache: "false"`;
+Staticcheck's binary cache stays enabled. README documents the input and moves
+consumer action SHAs only when needed or at the next Staticcheck bump.
+Lictor's own CI omits the input and retains the default. The input assertion
+was red before the change and green afterward. Local verification and pushed
+CI evidence are reported at close. The owner's PROJECT_DESC.md is untouched
+and unstaged; no tag or release is created.

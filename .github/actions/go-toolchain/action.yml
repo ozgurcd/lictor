@@ -5,12 +5,17 @@ inputs:
     description: Path to the caller's go.mod, relative to its checkout
     required: false
     default: go.mod
+  cache:
+    description: Enable setup-go's Go cache; disable when the caller owns it
+    required: false
+    default: "true"
 runs:
   using: composite
   steps:
     - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
       with:
         go-version-file: ${{ inputs.go-version-file }}
+        cache: ${{ inputs.cache }}
         cache-dependency-path: ${{ inputs.go-version-file }}
     - name: Assert Go and identify the Staticcheck build
       id: build

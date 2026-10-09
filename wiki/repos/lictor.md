@@ -59,3 +59,4 @@ CI and release use the local `.github/actions/go-toolchain` action, introduced i
 |---|---|---|
 | 2026-10-09 | co-versioned | TOOL-WIKI-1: record TOOLCHAIN-1 `d35a8ad`, shared action ownership and CI 37954717328. |
 | 2026-10-09 | co-versioned | TOOL-WIKI-1: pin CI to published Achta v0.5.18 and its verified Linux amd64 checksum; local compatibility and product behavior unchanged. |
+| 2026-10-09 | co-versioned | LICTOR-ACTION-CACHE: default-true cache input passes through to setup-go; callers may disable Go caching, with action SHA updates only when needed or at the next Staticcheck bump. |
