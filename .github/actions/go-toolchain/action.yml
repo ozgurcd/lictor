@@ -1,0 +1,67 @@
+name: Go and Staticcheck
+description: Set up the caller's Go version and checksum-verified Staticcheck build
+inputs:
+  go-version-file:
+    description: Path to the caller's go.mod, relative to its checkout
+    required: false
+    default: go.mod
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+      with:
+        go-version-file: ${{ inputs.go-version-file }}
+        cache-dependency-path: ${{ inputs.go-version-file }}
+    - name: Assert Go and identify the Staticcheck build
+      id: build
+      shell: bash
+      env:
+        GO_VERSION_FILE: ${{ inputs.go-version-file }}
+      run: |
+        set -euo pipefail
+        expected="go$(awk '$1 == "go" {print $2}' "$GITHUB_WORKSPACE/$GO_VERSION_FILE")"
+        go version
+        test "$(go env GOVERSION)" = "$expected"
+        # Hash all build pins and the recipe, so no changed patch can reuse a binary.
+        recipe=$(sha256sum "$GITHUB_ACTION_PATH/action.yml" | cut -d ' ' -f 1)
+        echo "key=lictor-staticcheck-${RUNNER_OS}-${RUNNER_ARCH}-${expected}-${recipe}" >> "$GITHUB_OUTPUT"
+        echo "bin=$RUNNER_TEMP/lictor-staticcheck/bin" >> "$GITHUB_OUTPUT"
+    - name: Cache Staticcheck
+      id: cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.build.outputs.bin }}
+        key: ${{ steps.build.outputs.key }}
+    - name: Build Staticcheck from verified source and patches
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        STATICCHECK_BIN: ${{ steps.build.outputs.bin }}
+        STATICCHECK_TAG: "2026.2.1"
+        STATICCHECK_SOURCE_SHA256: 8d807cd909f4481d6777f7707e5ae75dcc399e14d68ff14a3c814731826e0dfc
+        STATICCHECK_PATCH1: 4ff8b865d12b49f3af67daf2294023336987dad5
+        STATICCHECK_PATCH1_SHA256: 19f123d3f405f779e82a739d3d6e7e3b289659b496ac82bd699586465b06ecc4
+        STATICCHECK_PATCH2: 01bcfe17fb93153091b35df4036a1d73087817ab
+        STATICCHECK_PATCH2_SHA256: 52ce80f83d597020938bb7c463070f3c133802995029faeb632e3fc385fb4d8a
+      run: |
+        set -euo pipefail
+        src=$(mktemp -d "$RUNNER_TEMP/staticcheck-src.XXXXXX")
+        trap 'rm -rf "$src"' EXIT
+        mkdir -p "$STATICCHECK_BIN"
+        curl -fsSL -o "$src/src.tar.gz" "https://github.com/dominikh/go-tools/archive/refs/tags/${STATICCHECK_TAG}.tar.gz"
+        curl -fsSL -o "$src/p1.patch" "https://github.com/dominikh/go-tools/commit/${STATICCHECK_PATCH1}.patch?full_index=1"
+        curl -fsSL -o "$src/p2.patch" "https://github.com/dominikh/go-tools/commit/${STATICCHECK_PATCH2}.patch?full_index=1"
+        printf '%s  %s\n' "$STATICCHECK_SOURCE_SHA256" "$src/src.tar.gz" "$STATICCHECK_PATCH1_SHA256" "$src/p1.patch" "$STATICCHECK_PATCH2_SHA256" "$src/p2.patch" | sha256sum -c -
+        tar -xzf "$src/src.tar.gz" -C "$src"
+        patch -d "$src/go-tools-${STATICCHECK_TAG}" -p1 < "$src/p1.patch"
+        patch -d "$src/go-tools-${STATICCHECK_TAG}" -p1 < "$src/p2.patch"
+        (cd "$src/go-tools-${STATICCHECK_TAG}" && go build -trimpath -o "$STATICCHECK_BIN/staticcheck" ./cmd/staticcheck)
+    - name: Assert Staticcheck and add it to PATH
+      shell: bash
+      env:
+        STATICCHECK_BIN: ${{ steps.build.outputs.bin }}
+      run: |
+        set -euo pipefail
+        "$STATICCHECK_BIN/staticcheck" --version
+        test "$("$STATICCHECK_BIN/staticcheck" --version)" = 'staticcheck 2026.2.1 (0.8.1)'
+        echo "$STATICCHECK_BIN" >> "$GITHUB_PATH"

@@ -23,9 +23,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.RELEASE_TAG }}
-      - uses: actions/setup-go@v6
-        with:
-          go-version-file: go.mod
+      - uses: ./.github/actions/go-toolchain
       - name: Verify annotated tag, source version and tests
         shell: bash
         run: |
