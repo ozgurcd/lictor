@@ -694,3 +694,10 @@ remains modified and unstaged. Local verification and CI are reported at close.
 ## [2026-10-09] maintenance | TOOL-WIKI-1
 
 Close TOOLCHAIN-1 record debt for `d35a8ad`: local Go/Staticcheck action, caller go.mod, checksum-verified build inputs. CI 37954717328 passed in that slice. No product change; PROJECT_DESC.md is untouched. Current documentation gates are reported at close.
+
+## [2026-10-09] maintenance | TOOL-WIKI-1 Achta CI pin
+
+After Achta release run 37962790929 passed, move the exact CI pin to v0.5.18
+with its published Linux amd64 checksum. The version assertion failed before
+the update and passed afterward; the downloaded archive matches checksums.txt.
+Local compatibility bounds, route semantics and PROJECT_DESC.md stay unchanged.
