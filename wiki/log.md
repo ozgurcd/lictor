@@ -670,3 +670,13 @@ no self-SHA. This makes the existing check judge the page, rather than relaxing
 any predicate. The separate clean-tree failure is the owner's explicitly
 protected PROJECT_DESC.md edit; it is preserved, never staged or hidden.
 The red and corrected freshness results and final verification are in the report.
+
+## [2026-10-09] validation | GO-1.27.2-TOOLS
+
+Fix forward from CI 37946490467 at e7819b6 under owner ruling gg. That run
+failed staticcheck on Go export data version 5. Reuse the OSS ci.yml
+brew-identical 2026.2.1 source and two PR 1834 patches, with all three
+published SHA-256 pins unchanged. The local staticcheck predicate stays v0.8.1;
+both Go workflows already read go.mod at 1.27.2. No release or product change.
+Local make verify and the pushed CI run are reported at close. The owner's
+PROJECT_DESC.md remains untouched and unstaged.

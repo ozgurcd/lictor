@@ -48,3 +48,4 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-10-09 | co-versioned | ACHTA-GATE-RUN security prerequisite: advance Go to 1.27.2 for GO-2026-6604; local and CI use go.mod; keep every validation predicate. |
 | 2026-10-09 | co-versioned | ACHTA-GATE-RUN: pin CI to published Achta v0.5.16 and its Linux amd64 checksum; retain the local v0.5.15 through below-v0.6.0 compatibility range; no Lictor release. |
 | 2026-10-09 | co-versioned | ACHTA-GATE-RUN postcheck: declare the repository page category so freshness evaluates its existing co-versioned contract instead of skipping it. |
+| 2026-10-09 | co-versioned | GO-1.27.2-TOOLS: build CI staticcheck from the pinned brew-identical source and patches so Go 1.27.2 export data is supported; no version or gate relaxation. |
