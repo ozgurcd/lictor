@@ -50,3 +50,11 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-10-09 | co-versioned | ACHTA-GATE-RUN postcheck: declare the repository page category so freshness evaluates its existing co-versioned contract instead of skipping it. |
 | 2026-10-09 | co-versioned | GO-1.27.2-TOOLS: build CI staticcheck from the pinned brew-identical source and patches so Go 1.27.2 export data is supported; no version or gate relaxation. |
 | 2026-10-09 | co-versioned | ACHTA-JOURNAL-3: pin CI to published Achta v0.5.17 and its Linux amd64 checksum; retain local compatibility bounds and all product behavior. |
+
+## Toolchain ownership (2026-10-09)
+
+CI and release use the local `.github/actions/go-toolchain` action, introduced in `d35a8ad`. It selects Go from the caller go.mod and builds checksum-verified Staticcheck; consumers pin the action commit.
+
+| Date | Commit | Change |
+|---|---|---|
+| 2026-10-09 | co-versioned | TOOL-WIKI-1: record TOOLCHAIN-1 `d35a8ad`, shared action ownership and CI 37954717328. |

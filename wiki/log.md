@@ -690,3 +690,7 @@ installed Homebrew binary reports version agreement pass. The pin assertion
 was red before the update and green after it. Local compatibility bounds,
 route semantics and product code are unchanged. The owner's PROJECT_DESC.md
 remains modified and unstaged. Local verification and CI are reported at close.
+
+## [2026-10-09] maintenance | TOOL-WIKI-1
+
+Close TOOLCHAIN-1 record debt for `d35a8ad`: local Go/Staticcheck action, caller go.mod, checksum-verified build inputs. CI 37954717328 passed in that slice. No product change; PROJECT_DESC.md is untouched. Current documentation gates are reported at close.
