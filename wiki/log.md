@@ -680,3 +680,13 @@ published SHA-256 pins unchanged. The local staticcheck predicate stays v0.8.1;
 both Go workflows already read go.mod at 1.27.2. No release or product change.
 Local make verify and the pushed CI run are reported at close. The owner's
 PROJECT_DESC.md remains untouched and unstaged.
+
+## [2026-10-09] validation | ACHTA-JOURNAL-3
+
+Advance the CI Achta pin to v0.5.17 and Linux amd64 SHA-256
+3fd1c585dc168b571363435a688b7c656b97415e8fc8d7774b179fee4bac964e
+from its published checksums.txt. Release run 37950186863 passed and the
+installed Homebrew binary reports version agreement pass. The pin assertion
+was red before the update and green after it. Local compatibility bounds,
+route semantics and product code are unchanged. The owner's PROJECT_DESC.md
+remains modified and unstaged. Local verification and CI are reported at close.
