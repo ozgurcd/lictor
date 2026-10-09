@@ -659,3 +659,14 @@ The owner's PROJECT_DESC.md remains unstaged and byte-identical, SHA-256
 86bbb4ecde57b6b3693d5b868407a5f264dd247cb1cd3d395574fdfc105a814f.
 Full make verify precedes this commit; the authorized main push and CI result
 are reported at the close. The repository claim is released after its push.
+
+## [2026-10-09] documentation | ACHTA-GATE-RUN postcheck metadata
+
+The final slice check found wiki-pin red because this page omitted category:
+repo. Direct freshness returned fresh=0, skipped=1. Achta's category predicate
+in internal/wiki/status.go skips that metadata shape before co-versioned checks.
+Add the category and refresh the reviewed date; retain co_versioned: true and
+no self-SHA. This makes the existing check judge the page, rather than relaxing
+any predicate. The separate clean-tree failure is the owner's explicitly
+protected PROJECT_DESC.md edit; it is preserved, never staged or hidden.
+The red and corrected freshness results and final verification are in the report.

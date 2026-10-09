@@ -1,8 +1,9 @@
 ---
 title: Lictor
+category: repo
 status: authoritative
 co_versioned: true
-verified: 2026-10-07
+verified: 2026-10-09
 ---
 
 # Lictor
@@ -46,3 +47,4 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-10-07 | co-versioned | LICTOR-11: v0.4.6 leaves declared values shorter than eight bytes unchanged with explicit presence evidence; preserves long-value streaming redaction and adds checked Homebrew formula publication to the release workflow. |
 | 2026-10-09 | co-versioned | ACHTA-GATE-RUN security prerequisite: advance Go to 1.27.2 for GO-2026-6604; local and CI use go.mod; keep every validation predicate. |
 | 2026-10-09 | co-versioned | ACHTA-GATE-RUN: pin CI to published Achta v0.5.16 and its Linux amd64 checksum; retain the local v0.5.15 through below-v0.6.0 compatibility range; no Lictor release. |
+| 2026-10-09 | co-versioned | ACHTA-GATE-RUN postcheck: declare the repository page category so freshness evaluates its existing co-versioned contract instead of skipping it. |
