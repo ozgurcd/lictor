@@ -646,3 +646,16 @@ The owner's PROJECT_DESC.md remains unstaged and byte-identical, SHA-256
 86bbb4ecde57b6b3693d5b868407a5f264dd247cb1cd3d395574fdfc105a814f.
 Full make verify precedes this commit. The Achta CI pin is a separate change;
 both commits travel in one authorized main push, with the CI result in the report.
+
+## [2026-10-09] validation | ACHTA-GATE-RUN
+
+Move the CI Achta pin to v0.5.16 and the published Linux x86_64 SHA-256
+bceeabedef5ed1d413abcb9714451bcdba8d7f8ec57e30a5f397469915cbbfe7.
+The pre-edit pin assertion failed at v0.5.15; the new version and digest match
+the public release checksums. The Makefile's local range remains v0.5.15 through
+versions below v0.6.0. No product code or Lictor release version changes.
+The separate prerequisite commit f8173f8 fixes the security check's Go patch.
+The owner's PROJECT_DESC.md remains unstaged and byte-identical, SHA-256
+86bbb4ecde57b6b3693d5b868407a5f264dd247cb1cd3d395574fdfc105a814f.
+Full make verify precedes this commit; the authorized main push and CI result
+are reported at the close. The repository claim is released after its push.

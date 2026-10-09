@@ -45,3 +45,4 @@ the canonical gate; no consumer is modified or automatically discovered.
 | 2026-10-06 | co-versioned | LICTOR-10: accept compatible stable local Achta and Rulefloor patch versions with agreement pass; strict JSON/range selftests join verify; exact CI pins and consumer route comparisons stay unchanged. |
 | 2026-10-07 | co-versioned | LICTOR-11: v0.4.6 leaves declared values shorter than eight bytes unchanged with explicit presence evidence; preserves long-value streaming redaction and adds checked Homebrew formula publication to the release workflow. |
 | 2026-10-09 | co-versioned | ACHTA-GATE-RUN security prerequisite: advance Go to 1.27.2 for GO-2026-6604; local and CI use go.mod; keep every validation predicate. |
+| 2026-10-09 | co-versioned | ACHTA-GATE-RUN: pin CI to published Achta v0.5.16 and its Linux amd64 checksum; retain the local v0.5.15 through below-v0.6.0 compatibility range; no Lictor release. |
