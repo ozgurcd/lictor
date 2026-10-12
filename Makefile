@@ -15,7 +15,7 @@ directories:
 
 toolchain-check: directories $(GOVULNCHECK)
 	@test "$$(go env GOVERSION)" = "go$$(awk '$$1 == "go" {print $$2}' go.mod)"
-	staticcheck -version | grep -F '(0.8.1)'
+	staticcheck -version | grep -F '(0.8.2)'
 	$(GOVULNCHECK) -version | grep -F 'govulncheck@v1.7.0'
 	sh scripts/tool-version-check.sh rulefloor v0.9.1 v0.10.0
 	sh scripts/tool-version-check.sh achta v0.5.15 v0.6.0

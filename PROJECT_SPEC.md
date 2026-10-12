@@ -141,7 +141,7 @@ The Grype adapter's environment and policy are unchanged.
 staticcheck, govulncheck, tidy-check, rulefloor and wiki-check, serially. Default
 tests are offline fixtures. `make grype-scan REPO=/absolute/path` is an explicit
 live scan outside that default plan. Tool pins are Go from go.mod, staticcheck
-v0.8.1 and govulncheck v1.7.0. Local validation accepts
+v0.8.2 and govulncheck v1.7.0. Local validation accepts
 achta v0.5.15 or later within v0.5 and rulefloor v0.9.1 or later within v0.9,
 each with `version_agreement == pass` and no prerelease suffix.
 CI retains exact version and checksum pins. A new minor line or required feature

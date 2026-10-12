@@ -712,3 +712,31 @@ Lictor's own CI omits the input and retains the default. The input assertion
 was red before the change and green afterward. Local verification and pushed
 CI evidence are reported at close. The owner's PROJECT_DESC.md is untouched
 and unstaged; no tag or release is created.
+
+## [2026-10-12] maintenance | LICTOR-STATICCHECK-2026.2.2
+
+Build Staticcheck 2026.2.2 (0.8.2) from the upstream tag tarball, SHA-256
+f957eca5ee25bba46711433bfc320e0e900304ebb89641264bde256031926139,
+measured with `sha256sum src.tar.gz` after downloading
+https://github.com/dominikh/go-tools/archive/refs/tags/2026.2.2.tar.gz.
+The old patch commits are not tag ancestors. Their fixes are included through
+upstream d7adf6b1c906394435c7d69fcad9ffb41f9634c6 (x/tools v0.51.0)
+and b9fad240e85db48ceb2e94a9b87d363da6ca8554 (no linkname hacks), both
+proved tag ancestors with `git merge-base --is-ancestor`; the release notes
+confirm Go 1.27.2 export-data support. Drop both superseded patch downloads,
+hashes and applications. The action-content cache key already binds the recipe.
+The unpatched source builds with `go build -trimpath` and prints the exact
+required version. Local toolchain-check was red on its old 0.8.1 expectation;
+the Makefile, README and live specification now require 0.8.2.
+Full local verification, final CI and push readback are reported at close in
+nuntius-workspace/reports/LICTOR-STATICCHECK-2026.2.2.txt; scratch evidence is
+nuntius-workspace/_scratch/lictor-staticcheck-2026.2.2/.
+QUEUE: after the OSS release goal moves its action SHA and STATICCHECK_VERSION,
+update the remaining shared-action consumers achta, gograph, identuum-ag-ce,
+legattus, nuntius, rulefloor and scrinium to the pushed action SHA; review the
+parked identuum-idp-ce v0.8.1 standalone pin when it resumes. File:line and
+existing SHA evidence is in scratch consumer-census.txt. Parent queue filing is
+declined here because this goal authorizes only lictor; this local queue line
+hands the work to the judge without a sibling write.
+The owner's modified PROJECT_DESC.md remains unchanged and unstaged. No Go
+source, consumer, host tool, tag or release is changed.

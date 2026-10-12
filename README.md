@@ -172,7 +172,7 @@ make verify
 make wiki-check
 ```
 
-Go 1.27.2, staticcheck v0.8.1 and jq must be on PATH, with
+Go 1.27.2, staticcheck v0.8.2 and jq must be on PATH, with
 achta v0.5.15 or later within v0.5 and rulefloor v0.9.1 or later within v0.9.
 Both tools must report `version_agreement == pass`; prereleases are refused.
 CI pins exact versions and archive checksums. A new minor line or a required
@@ -197,7 +197,7 @@ After checkout, use `ozgurcd/lictor/.github/actions/go-toolchain@<full-commit-SH
 The `go-version-file` input defaults to the caller's `go.mod`.
 The `cache` input defaults to `"true"`; set `cache: "false"` when the caller owns Go caching.
 For a Go bump, change the `go` directive in each repository's `go.mod`.
-For a Staticcheck bump, change the source, patch checksums and version assertion
+For a Staticcheck bump, change the source checksum, any required patch pins and version assertion
 once in `.github/actions/go-toolchain/action.yml`, verify Lictor CI, then update
 the action SHA in each consumer. The binary cache includes the action's complete
 recipe, Go version, runner OS and architecture; both versions are checked on hits
