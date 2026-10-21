@@ -740,3 +740,17 @@ declined here because this goal authorizes only lictor; this local queue line
 hands the work to the judge without a sibling write.
 The owner's modified PROJECT_DESC.md remains unchanged and unstaged. No Go
 source, consumer, host tool, tag or release is changed.
+
+## [2026-10-21] licence | GENERALIZATION-XREVIEW-OF-A
+
+Complete the MIT declaration introduced by `569d078` under OA-93. The owner
+relicensed Lictor's internal/grype port under MIT in OA-95. NOTICE retains the
+source repository, path, revision and LICTOR-0 provenance sentence, and replaces
+the incompatible all-rights-reserved and no-open-source-licence statements.
+This records the licence of the port in Lictor; it does not change the source
+repository. LICENSE, Go source, gate rules and consumer behavior stay unchanged.
+The owner requested quick offline validation: go build ./... and
+go test ./... -count=1 -timeout=120s passed with the mandated shared GOCACHE,
+GOFLAGS=-mod=readonly and GOPROXY=off (load1 before validation 18.03466796875).
+The local wiki check is reported at close. Full make verify, race, CI and
+publication were not run; no new release or remote permission is implied.
