@@ -205,3 +205,7 @@ and misses. Other tools remain pinned by each consumer. Local Makefile tool
 version checks must agree with the selected Staticcheck version.
 Consumers move to a new action SHA only when they need its changes or at the
 next Staticcheck bump.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
