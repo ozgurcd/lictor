@@ -16,7 +16,7 @@ import (
 	"github.com/ozgurcd/lictor/internal/grype"
 )
 
-const version = "v0.4.6"
+const version = "v0.4.7"
 
 type evaluation struct {
 	Outcome string `json:"outcome"`

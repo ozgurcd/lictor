@@ -1,3 +1,14 @@
+# v0.4.7 — 2026-11-04
+
+A refusal caused by a declared LICTOR_VERSION pin that differs from the running
+version now says that --unpinned does not override a declared pin and how to
+proceed. `witness run` prints one stderr line naming the inherited environment
+variables it does not pass to gate targets. The grype configuration check now
+accepts both spellings of the exclude list (grype 0.121.1 reports it as
+declared), compares exclude globs as text so look-alike patterns are refused,
+and the Makefile directories target works in linked worktrees. go.mod moves to
+Go 1.27.3.
+
 # v0.4.6 — 2026-10-07
 
 Declared environment values shorter than 8 bytes now pass through gate output,

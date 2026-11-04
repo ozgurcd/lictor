@@ -754,3 +754,11 @@ go test ./... -count=1 -timeout=120s passed with the mandated shared GOCACHE,
 GOFLAGS=-mod=readonly and GOPROXY=off (load1 before validation 18.03466796875).
 The local wiki check is reported at close. Full make verify, race, CI and
 publication were not run; no new release or remote permission is implied.
+
+## [2026-11-04] release | LICTOR-RELEASE-V047
+
+Patch release v0.4.7 of bdda876, 63890b8 and 4985cb9 (reviewed AGREE; LLM-duo round 2
+AGREE on both lanes) linear onto origin/main 9de484f, plus this version-bump commit.
+The version constant and both schema constants move together; release notes, the repo
+page and this log follow the v0.4.6 release file set. PROJECT_DESC.md in the owner
+checkout is untouched.

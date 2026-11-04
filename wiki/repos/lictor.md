@@ -3,7 +3,7 @@ title: Lictor
 category: repo
 status: authoritative
 co_versioned: true
-verified: 2026-10-21
+verified: 2026-11-04
 ---
 
 # Lictor
@@ -62,3 +62,4 @@ CI and release use the local `.github/actions/go-toolchain` action, introduced i
 | 2026-10-09 | co-versioned | LICTOR-ACTION-CACHE: default-true cache input passes through to setup-go; callers may disable Go caching, with action SHA updates only when needed or at the next Staticcheck bump. |
 | 2026-10-12 | co-versioned | LICTOR-STATICCHECK-2026.2.2: build checksum-verified upstream 2026.2.2 without superseded patches; assert 0.8.2 locally and in the action; consumer pins remain separate. |
 | 2026-10-21 | co-versioned | GENERALIZATION-XREVIEW-OF-A: OA-95 relicenses the internal/grype port under MIT; NOTICE retains its exact source provenance and completes the MIT declaration introduced by 569d078. |
+| 2026-11-04 | co-versioned | LICTOR-RELEASE-V047: v0.4.7 explains declared-pin refusals under --unpinned, reports dropped inherited environment in witness run, accepts both grype exclude spellings with text-compared globs, and moves go.mod to Go 1.27.3. |
