@@ -169,8 +169,8 @@ func ReadDeclaration(raw []byte) (Declaration, error) {
 }
 
 // ScanConfig is the configuration grype reports about ITSELF in its JSON
-// report (descriptor.configuration), measured against grype 0.118.0: excludes
-// come back as absolute paths, durations as nanoseconds, and the ignore list
+// report (descriptor.configuration). Excludes come back absolute under grype
+// 0.118.0-0.121.0 and as declared under 0.121.1; durations as nanoseconds, and the ignore list
 // carries grype's built-in rules beside the declared ones.
 type ScanConfig struct {
 	Exclude            []string
@@ -215,28 +215,60 @@ func ParseScanConfig(raw []byte) (cfg ScanConfig, present bool, err error) {
 	return cfg, true, nil
 }
 
+// canonExclude puts an exclude pattern, as declared or as grype reports it,
+// into one form: slash-separated, relative to the scan root, no leading "./".
+// grype 0.118-0.121.0 reports an absolute path under the root; 0.121.1 reports
+// the pattern as declared. ok is false when the pattern leaves the root
+// (./../x, or an absolute path outside it): such a pattern never matches
+// anything declared.
+func canonExclude(p, root string) (canon string, ok bool) {
+	if filepath.IsAbs(p) {
+		rel, err := filepath.Rel(root, p)
+		if err != nil {
+			return p, false
+		}
+		p = rel
+	}
+	p = filepath.ToSlash(filepath.Clean(p))
+	if p == ".." || strings.HasPrefix(p, "../") {
+		return p, false
+	}
+	return p, true
+}
+
 // CompareConfig is predicate (a): the effective configuration equals the
-// committed declaration. root is the absolute scan root, because grype
-// reports excludes resolved against it.
+// committed declaration. root is the absolute scan root; both exclude lists are
+// normalised against it (canonExclude) so either grype spelling compares equal.
+// Measured against grype 0.121.1 (2026-11-04, `grype -c cfg -o json dir:.`):
+// descriptor.configuration.exclude is ["./bin/**","./identuum-idp","./.gograph/**"],
+// exactly as declared; 0.118.0 reported them absolute.
 func CompareConfig(cfg ScanConfig, d Declaration, root string) (line string, ok bool) {
 	var problems []string
 
-	want := map[string]bool{}
+	want := map[string]string{} // canonical -> declared spelling
 	for _, p := range d.Exclude {
-		want[filepath.Join(root, strings.TrimPrefix(p, "./"))] = true
+		c, inRoot := canonExclude(p, root)
+		if !inRoot {
+			problems = append(problems, "declared exclude "+p+" leaves the scan root")
+			continue
+		}
+		want[c] = p
 	}
 	got := map[string]bool{}
 	for _, p := range cfg.Exclude {
-		got[p] = true
-	}
-	for _, p := range d.Exclude {
-		if !got[filepath.Join(root, strings.TrimPrefix(p, "./"))] {
-			problems = append(problems, "declared exclude "+p+" is not in effect")
+		c, inRoot := canonExclude(p, root)
+		if !inRoot {
+			problems = append(problems, "effective exclude "+p+" leaves the scan root")
+			continue
+		}
+		got[c] = true
+		if _, declared := want[c]; !declared {
+			problems = append(problems, "effective exclude "+p+" is not declared")
 		}
 	}
-	for p := range got {
-		if !want[p] {
-			problems = append(problems, "effective exclude "+p+" is not declared")
+	for c, p := range want {
+		if !got[c] {
+			problems = append(problems, "declared exclude "+p+" is not in effect")
 		}
 	}
 

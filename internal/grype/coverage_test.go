@@ -99,6 +99,59 @@ func TestCoverage_ConfigApplied(t *testing.T) {
 	}
 }
 
+// TestCoverage_ConfigExcludeForms — LIC-03 (2026-11-04). grype 0.118-0.121.0
+// reports excludes absolute; 0.121.1 reports them as declared (measured:
+// ["./bin/**","./identuum-idp","./.gograph/**"]). Either spelling, or a mix,
+// must compare equal to the declaration; a missing, extra or root-escaping
+// exclude must still fail.
+func TestCoverage_ConfigExcludeForms(t *testing.T) {
+	d, err := ReadDeclaration([]byte(declaration))
+	if err != nil {
+		t.Fatalf("declaration: %v", err)
+	}
+	base, _, err := ParseScanConfig([]byte(effective("/repo")))
+	if err != nil {
+		t.Fatalf("effective config: %v", err)
+	}
+	withExclude := func(ex ...string) ScanConfig {
+		c := base
+		c.Exclude = ex
+		return c
+	}
+	cases := []struct {
+		name    string
+		exclude []string
+		ok      bool
+		want    string // substring of the failure line
+	}{
+		{"absolute (0.118-0.121.0)", []string{"/repo/bin/**", "/repo/identuum-idp", "/repo/.gograph/**"}, true, ""},
+		{"relative as declared (0.121.1)", []string{"./bin/**", "./identuum-idp", "./.gograph/**"}, true, ""},
+		{"mixed", []string{"/repo/bin/**", "./identuum-idp", "/repo/.gograph/**"}, true, ""},
+		{"missing", []string{"./bin/**", "./.gograph/**"}, false, "declared exclude ./identuum-idp is not in effect"},
+		{"missing (absolute)", []string{"/repo/bin/**", "/repo/.gograph/**"}, false, "declared exclude ./identuum-idp is not in effect"},
+		{"extra", []string{"./bin/**", "./identuum-idp", "./.gograph/**", "./src/**"}, false, "effective exclude ./src/** is not declared"},
+		{"extra (absolute)", []string{"/repo/bin/**", "/repo/identuum-idp", "/repo/.gograph/**", "/repo/src/**"}, false, "effective exclude /repo/src/** is not declared"},
+		{"traversal replaces a declared one", []string{"./bin/**", "./../identuum-idp", "./.gograph/**"}, false, "leaves the scan root"},
+		{"traversal is not the in-root name", []string{"./bin/**", "./identuum-idp", "./.gograph/**", "./../x"}, false, "effective exclude ./../x leaves the scan root"},
+		{"absolute outside the root", []string{"./bin/**", "./identuum-idp", "./.gograph/**", "/elsewhere/bin/**"}, false, "leaves the scan root"},
+		{"sibling prefix is not the root", []string{"./bin/**", "./identuum-idp", "./.gograph/**", "/repo-other/bin/**"}, false, "leaves the scan root"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			line, ok := CompareConfig(withExclude(tc.exclude...), d, "/repo")
+			if ok != tc.ok || (tc.want != "" && !strings.Contains(line, tc.want)) {
+				t.Fatalf("ok=%v want %v, line must contain %q; got %q", ok, tc.ok, tc.want, line)
+			}
+		})
+	}
+	// A declared exclude that escapes the root is itself a finding.
+	bad := d
+	bad.Exclude = append([]string{"./../x"}, d.Exclude...)
+	if line, ok := CompareConfig(withExclude("./../x", "./bin/**", "./identuum-idp", "./.gograph/**"), bad, "/repo"); ok || !strings.Contains(line, "declared exclude ./../x leaves the scan root") {
+		t.Fatalf("a declared root-escaping exclude must fail; got ok=%v %q", ok, line)
+	}
+}
+
 // TestCoverage_LapsedSuppressionIsAFinding — THE-EIGHT-QUICK-ONES, OSS 2
 // (2026-09-16). The committed file's own rule says an ignore entry past its
 // re-check date is a finding about the file; nothing enforced it. A

@@ -1,7 +1,8 @@
 .DEFAULT_GOAL := verify
 
 export GOCACHE := $(CURDIR)/.cache/go-build
-export GOMODCACHE := $(CURDIR)/.git/lictor-cache/go-mod
+GIT_COMMON_DIR := $(shell git rev-parse --path-format=absolute --git-common-dir)
+export GOMODCACHE := $(GIT_COMMON_DIR)/lictor-cache/go-mod
 export TMPDIR := $(CURDIR)/.cache/tmp
 export GIT_OPTIONAL_LOCKS := 0
 GOVULNCHECK := $(CURDIR)/.cache/tools/govulncheck
