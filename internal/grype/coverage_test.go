@@ -135,6 +135,18 @@ func TestCoverage_ConfigExcludeForms(t *testing.T) {
 		{"traversal is not the in-root name", []string{"./bin/**", "./identuum-idp", "./.gograph/**", "./../x"}, false, "effective exclude ./../x leaves the scan root"},
 		{"absolute outside the root", []string{"./bin/**", "./identuum-idp", "./.gograph/**", "/elsewhere/bin/**"}, false, "leaves the scan root"},
 		{"sibling prefix is not the root", []string{"./bin/**", "./identuum-idp", "./.gograph/**", "/repo-other/bin/**"}, false, "leaves the scan root"},
+		// CFG_EQ (duo 2026-11-04): glob text is not a filesystem path. Each of
+		// these collapsed onto a declared pattern under path.Clean, yet grype
+		// matches them differently (./bin/** drops /bin/go.mod, ./*/../bin/** keeps it).
+		{"E-REGRESSION wildcard parent", []string{"/repo/*/../bin/**", "/repo/identuum-idp", "/repo/.gograph/**"}, false, "effective exclude /repo/*/../bin/** is not a plain pattern"},
+		{"wildcard parent (relative)", []string{"./*/../bin/**", "./identuum-idp", "./.gograph/**"}, false, "is not a plain pattern"},
+		{"parent after a name", []string{"./a/../bin/**", "./identuum-idp", "./.gograph/**"}, false, "effective exclude ./a/../bin/** is not a plain pattern"},
+		{"dot segment", []string{"./bin/./**", "./identuum-idp", "./.gograph/**"}, false, "effective exclude ./bin/./** is not a plain pattern"},
+		{"empty segment", []string{".//bin/**", "./identuum-idp", "./.gograph/**"}, false, "is not a plain pattern"},
+		{"empty segment (absolute)", []string{"/repo//bin/**", "/repo/identuum-idp", "/repo/.gograph/**"}, false, "is not a plain pattern"},
+		{"trailing slash", []string{"./bin/**", "./identuum-idp/", "./.gograph/**"}, false, "effective exclude ./identuum-idp/ is not a plain pattern"},
+		{"absolute parent inside the root", []string{"/repo/x/../bin/**", "/repo/identuum-idp", "/repo/.gograph/**"}, false, "is not a plain pattern"},
+		{"the root itself", []string{"./bin/**", "./identuum-idp", "./.gograph/**", "/repo"}, false, "effective exclude /repo leaves the scan root"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {

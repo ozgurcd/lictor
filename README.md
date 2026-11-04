@@ -191,7 +191,7 @@ make verify
 make wiki-check
 ```
 
-Go 1.27.2, staticcheck v0.8.2 and jq must be on PATH, with
+Go 1.27.3, staticcheck v0.8.2 and jq must be on PATH, with
 achta v0.5.15 or later within v0.5 and rulefloor v0.9.1 or later within v0.9.
 Both tools must report `version_agreement == pass`; prereleases are refused.
 CI pins exact versions and archive checksums. A new minor line or a required

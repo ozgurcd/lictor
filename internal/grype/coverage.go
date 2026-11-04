@@ -216,24 +216,31 @@ func ParseScanConfig(raw []byte) (cfg ScanConfig, present bool, err error) {
 }
 
 // canonExclude puts an exclude pattern, as declared or as grype reports it,
-// into one form: slash-separated, relative to the scan root, no leading "./".
-// grype 0.118-0.121.0 reports an absolute path under the root; 0.121.1 reports
-// the pattern as declared. ok is false when the pattern leaves the root
-// (./../x, or an absolute path outside it): such a pattern never matches
-// anything declared.
-func canonExclude(p, root string) (canon string, ok bool) {
-	if filepath.IsAbs(p) {
-		rel, err := filepath.Rel(root, p)
-		if err != nil {
-			return p, false
+// into one form: "./" + the glob text relative to the scan root. grype
+// 0.118-0.121.0 reports an absolute path under the root; 0.121.1 reports the
+// pattern as declared. The pattern is GLOB text, not a filesystem path, so it
+// is never cleaned: the one conversion is stripping the root prefix. A pattern
+// whose text would change meaning under cleaning (an empty, "." or ".."
+// segment, a trailing "/") is refused, since two spellings that clean to one
+// path are different globs to grype. reason is "" when the pattern is accepted.
+func canonExclude(p, root string) (canon, reason string) {
+	rest := strings.TrimPrefix(p, "./")
+	if strings.HasPrefix(p, "/") {
+		prefix := strings.TrimSuffix(root, "/") + "/"
+		if !strings.HasPrefix(p, prefix) {
+			return p, "leaves the scan root"
 		}
-		p = rel
+		rest = strings.TrimPrefix(p, prefix)
 	}
-	p = filepath.ToSlash(filepath.Clean(p))
-	if p == ".." || strings.HasPrefix(p, "../") {
-		return p, false
+	for i, seg := range strings.Split(rest, "/") {
+		switch {
+		case seg == ".." && i == 0:
+			return p, "leaves the scan root"
+		case seg == "", seg == ".", seg == "..":
+			return p, "is not a plain pattern (empty, . or .. segment)"
+		}
 	}
-	return p, true
+	return "./" + rest, ""
 }
 
 // CompareConfig is predicate (a): the effective configuration equals the
@@ -247,18 +254,18 @@ func CompareConfig(cfg ScanConfig, d Declaration, root string) (line string, ok 
 
 	want := map[string]string{} // canonical -> declared spelling
 	for _, p := range d.Exclude {
-		c, inRoot := canonExclude(p, root)
-		if !inRoot {
-			problems = append(problems, "declared exclude "+p+" leaves the scan root")
+		c, reason := canonExclude(p, root)
+		if reason != "" {
+			problems = append(problems, "declared exclude "+p+" "+reason)
 			continue
 		}
 		want[c] = p
 	}
 	got := map[string]bool{}
 	for _, p := range cfg.Exclude {
-		c, inRoot := canonExclude(p, root)
-		if !inRoot {
-			problems = append(problems, "effective exclude "+p+" leaves the scan root")
+		c, reason := canonExclude(p, root)
+		if reason != "" {
+			problems = append(problems, "effective exclude "+p+" "+reason)
 			continue
 		}
 		got[c] = true
