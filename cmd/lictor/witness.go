@@ -79,6 +79,8 @@ func runWitness(ctx context.Context, args []string, wantJSON bool, out, diag io.
 	// Dirty human --all has the source driver's exact stdout/stderr contract.
 	// Other invocations retain repository context, including JSON callers.
 	deferContext := o.Mode == "run" && o.All && !wantJSON
+	// Human --all keeps the source driver's exact streams, so it stays silent.
+	o.ReportDroppedEnvironment = !deferContext
 	if !deferContext {
 		fmt.Fprintf(diag, "repository: %s\n", o.Repo)
 	}

@@ -35,7 +35,11 @@ make build
 Every repository command requires a matching LICTOR_VERSION in the consumer's
 .github/workflows/ci.yml. Absence or mismatch refuses with exit 2 and one stderr
 line, with no stdout. `--unpinned` permits deliberate non-consumer use with no
-declaration; it never bypasses a mismatch. JSON includes declared_version and
+declaration; it never bypasses a mismatch. A declared pin always wins over
+`--unpinned`: when the declared version differs from the running one, the
+refusal says so. To proceed, install the declared version
+(`brew install ozgurcd/tap/lictor`) or remove `LICTOR_VERSION` from
+`.github/workflows/ci.yml` and pass `--unpinned`. JSON includes declared_version and
 pinned. The released v0.4.5 intentionally refuses consumers pinned to another version.
 
 The source judge's stdout evidence line is preserved. Human stderr separately
@@ -116,8 +120,23 @@ declared bytes, not arbitrary transformations or separately printed substrings.
 Shorter values pass through; their record line says
 `environment: NAME present (short value, not redacted)`, including empty values.
 Target exits, timeouts and output bounds
-remain unchanged. With no declarations, console and record bytes retain the
-previous behavior.
+remain unchanged. With no declarations, the record bytes retain the previous
+behavior.
+
+Gate targets and `green` inherit only this allowlist from the caller's
+environment: `PATH`, `HOME`, `TMPDIR`, `XDG_CACHE_HOME`, `GOCACHE`, `GOMODCACHE`,
+`GOPATH`, `GOROOT`, `GOTOOLCHAIN`, `GOPROXY`, `GOSUMDB`, `GOPRIVATE`, `GONOPROXY`,
+`GONOSUMDB`, `GOOS`, `GOARCH`, `CGO_ENABLED`, `CC`, `CXX`, `SDKROOT`,
+`MACOSX_DEPLOYMENT_TARGET`, and for `witness run` also `GRYPE_DB_CACHE_DIR`,
+`GRYPE_DB_AUTO_UPDATE` and `GRYPE_CHECK_FOR_APP_UPDATE`, plus the names declared
+with `--env`. Lictor itself sets `GIT_OPTIONAL_LOCKS=0`, `LC_ALL=C`, `GOWORK=off`
+and `GOENV=off`. Everything else is dropped, notably `GOFLAGS` and `GOMAXPROCS`;
+pass a setting the gate needs inside the gate command (for example `-mod=readonly`)
+or declare it with `--env` when its name is not `GO*`. `witness run` prints one
+stderr line naming the dropped inherited variables (names only, never values):
+`gate-witness: inherited variables not passed to targets (N): NAME, NAME...`.
+The line is not written to the record. Human `--all` runs keep the source
+driver's exact streams and print no such line; use `--json` there.
 
 The tag-triggered release updates and reads back Homebrew's `Formula/lictor.rb`
 using the four published archive checksums. Its tap step fails closed naming

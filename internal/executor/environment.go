@@ -6,6 +6,7 @@ import (
 	"os"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -56,6 +57,43 @@ func DeclareEnvironment(names []string) (*GateEnvironment, error) {
 	// Longest first keeps overlapping values from exposing a longer suffix.
 	sort.Slice(g.values, func(i, j int) bool { return len(g.values[i]) > len(g.values[j]) })
 	return g, nil
+}
+
+// AllowedEnvironment lists the inherited names a gate target receives.
+func AllowedEnvironment() []string {
+	return append(append([]string{}, goEnvironmentNames...), recordEnvironmentNames...)
+}
+
+// DroppedEnvironment names the variables in environ that a target will not
+// inherit: everything outside the allowlist and the declared names. Lictor's
+// own fixed settings (LC_ALL, GOWORK, ...) replace any inherited value, so
+// those names count as dropped. It returns sorted names only, never values;
+// a name that is not a plain identifier is quoted.
+func DroppedEnvironment(environ []string, declared *GateEnvironment) []string {
+	kept := make(map[string]bool)
+	for _, name := range AllowedEnvironment() {
+		kept[name] = true
+	}
+	if declared != nil {
+		for _, name := range declared.names {
+			kept[name] = true
+		}
+	}
+	seen := make(map[string]bool)
+	var dropped []string
+	for _, entry := range environ {
+		name, _, _ := strings.Cut(entry, "=")
+		if kept[name] || seen[name] {
+			continue
+		}
+		seen[name] = true
+		if !environmentName.MatchString(name) {
+			name = strconv.Quote(name)
+		}
+		dropped = append(dropped, name)
+	}
+	sort.Strings(dropped)
+	return dropped
 }
 
 func (g *GateEnvironment) WritePresence(w io.Writer) {

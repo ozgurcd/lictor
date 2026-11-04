@@ -95,6 +95,8 @@ and fsmonitor disabling. The allowlisted environment contains PATH, HOME, TMPDIR
 XDG_CACHE_HOME, GRYPE_DB_CACHE_DIR, GRYPE_DB_AUTO_UPDATE and
 GRYPE_CHECK_FOR_APP_UPDATE; it adds GIT_OPTIONAL_LOCKS=0 and LC_ALL=C. No scanner
 policy override or credential variable is inherited by this adapter.
+Gate targets use the Go allowlist documented in README.md (the `witness run`
+notice names every inherited variable outside it, by name only).
 
 Go 1.27.2 is the creation floor. Runtime implementation uses the standard library.
 The sole direct test dependency, jsonschema/v6, validates published JSON Schema;

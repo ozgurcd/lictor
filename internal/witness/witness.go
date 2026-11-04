@@ -29,6 +29,10 @@ type Options struct {
 	// TargetOutput overrides the source-compatible dirty --all target stream
 	// for JSON callers, whose stdout must remain one result document.
 	TargetOutput io.Writer
+	// ReportDroppedEnvironment adds one diagnostic line naming the inherited
+	// variables targets do not receive. Off by default so callers that need the
+	// source driver's exact streams keep them.
+	ReportDroppedEnvironment bool
 }
 
 type Result struct {
@@ -189,6 +193,12 @@ func Run(ctx context.Context, o Options, out, diagnostic io.Writer) Result {
 		targetOutput = out
 		if o.TargetOutput != nil {
 			targetOutput = o.TargetOutput
+		}
+	}
+	if o.Mode == "run" && o.ReportDroppedEnvironment {
+		// Names only: a target never sees these, and no value is printed.
+		if dropped := executor.DroppedEnvironment(os.Environ(), o.environment); len(dropped) > 0 {
+			fmt.Fprintf(diagnostic, "gate-witness: inherited variables not passed to targets (%d): %s\n", len(dropped), strings.Join(dropped, ", "))
 		}
 	}
 	completed := map[string]int{}

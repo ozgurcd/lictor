@@ -64,6 +64,11 @@ func checkPin(root string, unpinned bool, errOut io.Writer) (pinMetadata, bool) 
 	}
 	if declared != nil {
 		if *declared != version {
+			if unpinned {
+				// A declared pin always wins: --unpinned only covers a missing declaration.
+				fmt.Fprintf(errOut, "%srefused — %s declares LICTOR_VERSION %s; --unpinned does not override a declared pin; install the declared version: brew install ozgurcd/tap/lictor, or remove LICTOR_VERSION from .github/workflows/ci.yml to run unpinned\n", prefix, base, *declared)
+				return p, false
+			}
 			fmt.Fprintf(errOut, "%srefused — %s declares LICTOR_VERSION %s; install the declared version: brew install ozgurcd/tap/lictor\n", prefix, base, *declared)
 			return p, false
 		}

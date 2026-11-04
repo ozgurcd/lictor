@@ -50,6 +50,10 @@ func TestPinFourCases(t *testing.T) {
 				want := "lictor " + version + ": refused — " + filepath.Base(root) + " declares no LICTOR_VERSION in .github/workflows/ci.yml env; pass --unpinned to run without a pin\n"
 				if tc.declared != "" {
 					want = "lictor " + version + ": refused — " + filepath.Base(root) + " declares LICTOR_VERSION " + tc.declared + "; install the declared version: brew install ozgurcd/tap/lictor\n"
+					if tc.unpinned {
+						// LIC-01: the refusal says a declared pin beats --unpinned and how to proceed.
+						want = "lictor " + version + ": refused — " + filepath.Base(root) + " declares LICTOR_VERSION " + tc.declared + "; --unpinned does not override a declared pin; install the declared version: brew install ozgurcd/tap/lictor, or remove LICTOR_VERSION from .github/workflows/ci.yml to run unpinned\n"
+					}
 				}
 				if out != "" || stderr != want {
 					t.Fatalf("refusal: stdout=%q stderr=%q want=%q", out, stderr, want)
