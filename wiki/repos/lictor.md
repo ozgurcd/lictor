@@ -63,3 +63,4 @@ CI and release use the local `.github/actions/go-toolchain` action, introduced i
 | 2026-10-12 | co-versioned | LICTOR-STATICCHECK-2026.2.2: build checksum-verified upstream 2026.2.2 without superseded patches; assert 0.8.2 locally and in the action; consumer pins remain separate. |
 | 2026-10-21 | co-versioned | GENERALIZATION-XREVIEW-OF-A: OA-95 relicenses the internal/grype port under MIT; NOTICE retains its exact source provenance and completes the MIT declaration introduced by 569d078. |
 | 2026-11-04 | co-versioned | LICTOR-RELEASE-V047: v0.4.7 explains declared-pin refusals under --unpinned, reports dropped inherited environment in witness run, accepts both grype exclude spellings with text-compared globs, and moves go.mod to Go 1.27.3. |
+| 2026-11-14 | co-versioned | LICTOR-CI-DEDUP-VERIFY: `make verify` no longer runs `make build`; test, race and vet compile every package and nothing in verify uses bin/lictor. |

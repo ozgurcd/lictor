@@ -78,7 +78,6 @@ verify:
 	$(MAKE) tool-version-selftest
 	$(MAKE) toolchain-check
 	$(MAKE) format-check
-	$(MAKE) build
 	$(MAKE) test
 	$(MAKE) race
 	$(MAKE) vet
