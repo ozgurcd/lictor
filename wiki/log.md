@@ -762,3 +762,10 @@ AGREE on both lanes) linear onto origin/main 9de484f, plus this version-bump com
 The version constant and both schema constants move together; release notes, the repo
 page and this log follow the v0.4.6 release file set. PROJECT_DESC.md in the owner
 checkout is untouched.
+
+## [2026-11-14] maintenance | LICTOR-CI-DEDUP-VERIFY
+
+`make verify` no longer runs `make build`. `test`, `race` and `vet` already
+compile every package including cmd/lictor, and no later verify step uses
+bin/lictor. The `build` target stays for `grype-scan` and local use. The
+Makefile wiring test in internal/grype passed.
